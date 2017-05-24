@@ -11,10 +11,14 @@ Core::Core()
     std::cout << "hardware_threads is " << hardware_threads << std::endl;
 
     //    modulesHandlerThread = std::unique_ptr<std::thread>(new std::thread(modulesHandler, this));
+    gameLoopThread = std::unique_ptr<std::thread>(new std::thread(gameLoop, this));
+    independentWorkersHandlerThread = std::unique_ptr<std::thread>(new std::thread(independentWorkersHandler, this));
 }
 
 Core::~Core()
 {
+    gameLoopThread->join();
+    independentWorkersHandlerThread->join();
 }
 
 void Core::addModule(std::shared_ptr<Module> module)
@@ -54,6 +58,22 @@ void Core::registerWorkers(std::vector<std::shared_ptr<Worker> >& workers)
     }
 }
 
+void Core::addGraphicsModule(std::shared_ptr<GraphicsModule> module)
+{
+    graphicsModules.push_back(module);
+}
+
+void Core::registerGraphicsWorker(std::shared_ptr<GraphicsWorker> graphicsWorker)
+{
+    graphicsWorkers.push_back(graphicsWorker);
+}
+
+void Core::registerGraphicsWorkers(std::vector<std::shared_ptr<GraphicsWorker> >& graphicsWorkers)
+{
+    for (auto& graphicsWorker : graphicsWorkers)
+        registerGraphicsWorker(graphicsWorker);
+}
+
 #ifdef LINUX
 #include <unistd.h>
 #endif
@@ -79,31 +99,35 @@ int Core::exec()
     return 0;
 }
 
-void Core::gameLoop()
+void Core::gameLoop(Core* core)
 {
     // TODO: finish it
     while (true /* TODO: addSomeCondition */) {
-        for (auto& worker : beforeGraphicsWorkers) {
+        for (auto& worker : core->beforeGraphicsWorkers) {
             // параллельная обработка
         }
         // ожидаение завершения
-        for (auto& worker : beforeGraphicsSynchronizedWorkers) {
+        for (auto& worker : core->beforeGraphicsSynchronizedWorkers) {
             // последовательная обработка
             // синхронизировать с independentSynchronizedWorkers
         }
         // графика
+        // TODO: предусмотреть возможность параллельной обработки graphicsWorker'ов
+        for (auto& graphicsWorker : core->graphicsWorkers) {
+            graphicsWorker->draw();
+        }
     }
 }
 
-void Core::independentWorkersHandler()
+void Core::independentWorkersHandler(Core* core)
 {
     // TODO: finish it
     while (true /* TODO: addSomeCondition */) {
-        for (auto& worker : independentWorkers) {
+        for (auto& worker : core->independentWorkers) {
             // параллельная обработка
         }
         // ожидаение завершения
-        for (auto& worker : independentSynchronizedWorkers) {
+        for (auto& worker : core->independentSynchronizedWorkers) {
             // последовательная обработка
         }
     }

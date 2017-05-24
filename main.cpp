@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 
+#include "engine/graphics_workers/testopenglgraphicsworker.h"
 #include <engine/core.h>
 
 using namespace std;
@@ -13,6 +14,9 @@ int main(int argc, char* argv[])
 
     //    core.addModule(
     //        std::unique_ptr<engine::TestModule>(new engine::TestModule));
+
+    auto openGLTestWorker = std::shared_ptr<engine::TestOpenglGraphicsWorker>(new engine::TestOpenglGraphicsWorker);
+    core.registerGraphicsWorker(openGLTestWorker);
 
     return core.exec();
 }

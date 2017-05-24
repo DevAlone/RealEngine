@@ -4,11 +4,12 @@
 
 namespace engine {
 
-Worker::Worker(Core* core, Module* module, WORKER_TYPE type, bool synchronized)
+Worker::Worker(Core* core, Module* module, WORKER_TYPE type, bool synchronized, std::__cxx11::string name)
     : core(core)
     , module(module)
     , type(type)
     , synchronized(synchronized)
+    , name(name)
 {
 }
 

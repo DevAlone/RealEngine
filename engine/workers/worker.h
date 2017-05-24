@@ -17,7 +17,7 @@ enum class WORKER_TYPE {
 // TODO: Добавить период обработки или приоритет или что-нибудь подобное
 class Worker {
 public:
-    Worker(Core* core, Module* module, WORKER_TYPE type, bool synchronized);
+    Worker(Core* core, Module* module, WORKER_TYPE type, bool synchronized, std::string name);
     virtual ~Worker();
 
     virtual void doIt(unsigned microseconds) = 0;
@@ -31,6 +31,7 @@ private:
     Module* module;
     const WORKER_TYPE type;
     const bool synchronized;
+    std::string name;
 };
 }
 
