@@ -5,12 +5,11 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     engine/exceptions/unabletodetermineworkertype.cpp \
-    engine/workers/worker.cpp \
+    engine/worker.cpp \
     engine/core.cpp \
-    engine/modules/module.cpp \
-    engine/graphics_modules/graphicsmodule.cpp \
-    engine/graphics_workers/graphicsworker.cpp \
-    engine/graphics_workers/testopenglgraphicsworker.cpp
+    engine/module.cpp \
+    engine/graphicsmodule.cpp \
+    engine/graphicsworker.cpp
 
 LIBS += -lGLEW -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread
 
@@ -19,14 +18,14 @@ DEFINES += LINUX
 
 HEADERS += \
     engine/exceptions/unabletodetermineworkertype.h \
-    engine/workers/worker.h \
+    engine/worker.h \
     engine/core.h \
-    engine/modules/module.h \
-    engine/modules/modules.h \
-    engine/exceptions/exceptions.h \
-    engine/workers/workers.h \
-    engine/graphics_modules/graphicsmodule.h \
-    engine/graphics_workers/graphicsworker.h \
-    engine/graphics_modules/graphicsmodules.h \
-    engine/graphics_workers/graphicsworkers.h \
-    engine/graphics_workers/testopenglgraphicsworker.h
+    engine/module.h \
+    engine/graphicsmodule.h \
+    engine/graphicsworker.h \
+    engine/modules/modules.i \
+    engine/engine.i \
+    engine/workers/workers.i \
+    engine/graphics_modules/graphics_modules.i \
+    engine/graphics_workers/graphics_workers.i \
+    engine/exceptions/exceptions.i

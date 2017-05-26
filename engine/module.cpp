@@ -1,7 +1,6 @@
 #include "module.h"
 
 namespace engine {
-
 Module::Module(Core* core)
     : core(core)
 {

@@ -1,7 +1,5 @@
 #include "worker.h"
 
-#include <engine/modules/modules.h>
-
 namespace engine {
 
 Worker::Worker(Core* core, Module* module, WORKER_TYPE type, bool synchronized, std::__cxx11::string name)

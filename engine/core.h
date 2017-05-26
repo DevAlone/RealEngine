@@ -7,27 +7,18 @@
 #include <thread>
 #include <vector>
 
-#include "engine/exceptions/exceptions.h"
-#include "engine/modules/modules.h"
-#include "engine/workers/workers.h"
+#include <boost/signals2.hpp>
 
-#include "engine/graphics_modules/graphicsmodules.h"
-#include "engine/graphics_workers/graphicsworkers.h"
+#include "engine.i"
+
+#include "exceptions/exceptions.i"
 
 namespace engine {
-/* forward declarations */
-namespace exceptions {
-    class UnableToDetermineWorkerType;
-}
-class GraphicsWorker;
-class GraphicsModule;
-/* /forward declarations */
-
 class Core {
 public:
     Core();
     virtual ~Core();
-
+    Module* m;
     void addModule(std::shared_ptr<Module> module);
     // module removes with its workers
     void removeModulesByName(const std::string* name) = delete;
@@ -47,6 +38,10 @@ public:
     int exec();
     static void gameLoop(Core* core);
     static void independentWorkersHandler(Core* core);
+
+    bool isPaused() const;
+    void setPausedState(bool value);
+    boost::signals2::signal<void(bool)> pausedStateChanged;
 
 private:
     unsigned hardware_threads;
@@ -70,6 +65,8 @@ private:
     std::vector<std::shared_ptr<Worker> > independentSynchronizedWorkers;
 
     std::vector<std::shared_ptr<GraphicsWorker> > graphicsWorkers;
+
+    bool paused;
 };
 }
 

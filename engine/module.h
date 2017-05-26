@@ -3,15 +3,9 @@
 
 #include <memory>
 
-#include <engine/core.h>
-#include <engine/workers/worker.h>
+#include "engine.i"
 
 namespace engine {
-/* forward declarations */
-class Core;
-class Worker;
-/* /forward declarations */
-
 class Module {
 public:
     Module(Core* core);

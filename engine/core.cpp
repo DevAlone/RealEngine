@@ -133,6 +133,17 @@ void Core::independentWorkersHandler(Core* core)
     }
 }
 
+bool Core::isPaused() const
+{
+    return paused;
+}
+
+void Core::setPausedState(bool value)
+{
+    paused = value;
+    pausedStateChanged(paused);
+}
+
 //void Core::modulesHandler(Core* core)
 //{
 //    while (true) {

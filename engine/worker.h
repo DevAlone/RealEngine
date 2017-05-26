@@ -1,14 +1,9 @@
 #ifndef WORKER_H
 #define WORKER_H
 
-#include <engine/core.h>
+#include "engine.i"
 
 namespace engine {
-/* forward declarations */
-class Core;
-class Module;
-/* /forward declarations */
-
 enum class WORKER_TYPE {
     BEFORE_GRAPHICS,
     INDEPENDENT,
@@ -32,6 +27,7 @@ private:
     const WORKER_TYPE type;
     const bool synchronized;
     std::string name;
+    int testd; //TODO: delete it
 };
 }
 

@@ -1,8 +1,7 @@
 #ifndef GRAPHICSWORKER_H
 #define GRAPHICSWORKER_H
 
-#include "engine/core.h"
-#include "engine/graphics_modules/graphicsmodules.h"
+#include "engine.i"
 
 namespace engine {
 class GraphicsWorker {
