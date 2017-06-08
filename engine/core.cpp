@@ -57,12 +57,6 @@ void Core::registerWorkers(std::vector<std::shared_ptr<Worker> >& workers)
         registerWorker(worker);
     }
 }
-
-void Core::addGraphicsModule(std::shared_ptr<GraphicsModule> module)
-{
-    graphicsModules.push_back(module);
-}
-
 void Core::registerGraphicsWorker(std::shared_ptr<GraphicsWorker> graphicsWorker)
 {
     graphicsWorkers.push_back(graphicsWorker);
@@ -114,7 +108,8 @@ void Core::gameLoop(Core* core)
         // графика
         // TODO: предусмотреть возможность параллельной обработки graphicsWorker'ов
         for (auto& graphicsWorker : core->graphicsWorkers) {
-            graphicsWorker->draw();
+            // TODO: add time
+            graphicsWorker->draw(0);
         }
     }
 }

@@ -28,9 +28,6 @@ public:
     void registerWorkers(std::vector<std::shared_ptr<Worker> >& workers);
     void unregisterWorkersByName(const std::string* name) = delete;
 
-    void addGraphicsModule(std::shared_ptr<GraphicsModule> module);
-    void removeGraphicsModulesByName(const std::string* name) = delete;
-
     void registerGraphicsWorker(std::shared_ptr<GraphicsWorker> graphicsWorker);
     void registerGraphicsWorkers(std::vector<std::shared_ptr<GraphicsWorker> >& graphicsWorkers);
     void unregisterGraphicsWorkersByName(const std::string* name) = delete;
@@ -56,7 +53,6 @@ private:
     };
 
     std::vector<std::shared_ptr<Module> > modules;
-    std::vector<std::shared_ptr<GraphicsModule> > graphicsModules;
 
     std::vector<std::shared_ptr<Worker> > workers;
     std::vector<std::shared_ptr<Worker> > beforeGraphicsWorkers;

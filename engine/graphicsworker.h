@@ -6,13 +6,13 @@
 namespace engine {
 class GraphicsWorker {
 public:
-    GraphicsWorker(Core* core, GraphicsModule* module, std::string name = "");
+    GraphicsWorker(Core* core, Module* module, std::string name = "");
 
-    virtual void draw() = 0;
+    virtual void draw(unsigned microseconds) = 0;
 
 protected:
     Core* core;
-    GraphicsModule* module;
+    Module* module;
     std::string name;
 
 private:

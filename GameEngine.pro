@@ -8,9 +8,9 @@ SOURCES += main.cpp \
     engine/worker.cpp \
     engine/core.cpp \
     engine/module.cpp \
-    engine/graphicsmodule.cpp \
     engine/graphicsworker.cpp \
-    engine/graphics_modules/openglmodule.cpp
+    engine/modules/GLFWOpenGLModule.cpp \
+    testgraphicsworker.cpp
 
 LIBS += -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread
 
@@ -22,13 +22,9 @@ HEADERS += \
     engine/worker.h \
     engine/core.h \
     engine/module.h \
-    engine/graphicsmodule.h \
     engine/graphicsworker.h \
-    engine/graphics_modules/openglmodule.h \
     engine/includes.h \
     engine/forwards.h \
-    engine/graphics_modules/forwards.h \
-    engine/graphics_modules/includes.h \
     engine/modules/forwards.h \
     engine/exceptions/forwards.h \
     engine/exceptions/includes.h \
@@ -36,4 +32,6 @@ HEADERS += \
     engine/graphics_workers/includes.h \
     engine/modules/includes.h \
     engine/workers/forwards.h \
-    engine/workers/includes.h
+    engine/workers/includes.h \
+    engine/modules/GLFWOpenGLModule.h \
+    testgraphicsworker.h
