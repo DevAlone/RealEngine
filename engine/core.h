@@ -1,5 +1,9 @@
-#ifndef CORE_H
-#define CORE_H
+#pragma once
+
+#include "forwards.h"
+#include "includes.h"
+
+#include "engine/exceptions/includes.h"
 
 #include <chrono>
 #include <iostream>
@@ -8,10 +12,6 @@
 #include <vector>
 
 #include <boost/signals2.hpp>
-
-#include "engine.i"
-
-#include "exceptions/exceptions.i"
 
 namespace engine {
 class Core {
@@ -69,5 +69,3 @@ private:
     bool paused;
 };
 }
-
-#endif // CORE_H

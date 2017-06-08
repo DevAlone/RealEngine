@@ -1,12 +1,7 @@
-#ifndef EXCEPTIONS_H
-#define EXCEPTIONS_H
+#pragma once
 
 namespace engine {
 namespace exceptions {
     class UnableToDetermineWorkerType;
 }
 }
-
-#include "unabletodetermineworkertype.h"
-
-#endif // EXCEPTIONS_H

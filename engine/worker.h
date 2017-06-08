@@ -1,7 +1,7 @@
-#ifndef WORKER_H
-#define WORKER_H
+#pragma once
 
-#include "engine.i"
+#include "forwards.h"
+#include "includes.h"
 
 namespace engine {
 enum class WORKER_TYPE {
@@ -30,5 +30,3 @@ private:
     int testd; //TODO: delete it
 };
 }
-
-#endif // WORKER_H

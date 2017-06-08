@@ -1,4 +1,5 @@
-#ifndef GRAPHICSMODULES_H
-#define GRAPHICSMODULES_H
+#pragma once
 
-#endif // GRAPHICSMODULES_H
+namespace graphics_modules {
+class OpenGLModule;
+}

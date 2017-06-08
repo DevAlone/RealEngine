@@ -1,9 +1,9 @@
-#ifndef MODULE_H
-#define MODULE_H
+#pragma once
+
+#include "forwards.h"
 
 #include <memory>
-
-#include "engine.i"
+#include <vector>
 
 namespace engine {
 class Module {
@@ -18,5 +18,3 @@ private:
     std::vector<std::shared_ptr<Worker> > workers;
 };
 }
-
-#endif // MODULE_H

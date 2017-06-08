@@ -1,10 +1,10 @@
-#ifndef UNABLETODETERMINEWORKERTYPE_H
-#define UNABLETODETERMINEWORKERTYPE_H
+#pragma once
+
+#include "engine/forwards.h"
 
 #include <exception>
+#include <stdexcept>
 #include <string>
-
-#include "../engine.i"
 
 namespace engine {
 
@@ -16,4 +16,3 @@ namespace exceptions {
 }
 }
 
-#endif // UNABLETODETERMINEWORKERTYPE_H

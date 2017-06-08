@@ -1,7 +1,7 @@
-#ifndef GRAPHICSWORKER_H
-#define GRAPHICSWORKER_H
+#pragma once
+#include "forwards.h"
 
-#include "engine.i"
+#include <string>
 
 namespace engine {
 class GraphicsWorker {
@@ -18,5 +18,3 @@ protected:
 private:
 };
 }
-
-#endif // GRAPHICSWORKER_H

@@ -1,11 +1,11 @@
-#ifndef OPENGLMODULE_H
-#define OPENGLMODULE_H
+#pragma once
 
+#include "forwards.h"
 
+namespace graphics_modules {
 class OpenGLModule
 {
 public:
     OpenGLModule();
 };
-
-#endif // OPENGLMODULE_H
+}

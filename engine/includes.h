@@ -1,4 +1,7 @@
-#ifndef INCLUDES_H
-#define INCLUDES_H
+#pragma once
 
-#endif // INCLUDES_H
+#include "core.h"
+#include "module.h"
+#include "worker.h"
+#include "graphicsmodule.h"
+#include "graphicsworker.h"

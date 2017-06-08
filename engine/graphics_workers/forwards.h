@@ -1,4 +1,1 @@
-#ifndef GRAPHICSWORKERS_H
-#define GRAPHICSWORKERS_H
-
-#endif // GRAPHICSWORKERS_H
+#pragma once

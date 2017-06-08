@@ -1,7 +1,6 @@
-#ifndef GRAPHICSMODULE_H
-#define GRAPHICSMODULE_H
+#pragma once
 
-#include "engine.i"
+#include "forwards.h"
 
 namespace engine {
 class GraphicsModule {
@@ -9,5 +8,3 @@ public:
     GraphicsModule();
 };
 }
-
-#endif // GRAPHICSMODULE_H

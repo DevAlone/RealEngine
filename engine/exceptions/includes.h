@@ -1,4 +1,3 @@
-#ifndef INCLUDES_H
-#define INCLUDES_H
+#pragma once
 
-#endif // INCLUDES_H
+#include "unabletodetermineworkertype.h"
