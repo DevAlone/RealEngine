@@ -1,14 +1,17 @@
 #include <iostream>
 #include <memory>
 
-#include "engine/includes.h"
 #include "TestGraphicsWorker.h"
+#include "engine/includes.h"
 #include <engine/modules/includes.h>
 
 using namespace std;
 
 int main(int argc, char* argv[])
 {
+    //    std::cout << glGetString(GL_VERSION) << std::endl;
+    //    while (true)
+    //        ;
     // TODO: add logger
 
     engine::Core core;

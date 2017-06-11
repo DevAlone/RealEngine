@@ -18,6 +18,13 @@ namespace modules {
             throw std::exception();
         }
         glfwMakeContextCurrent(window);
+
+        glewExperimental = GL_TRUE;
+        if (glewInit() != GLEW_OK) {
+            // TODO: make normal exception
+            throw std::exception();
+        }
+
         glfwSetFramebufferSizeCallback(window, framebufferSizeChangedCallback);
     }
     GLFWOpenGLModule::~GLFWOpenGLModule()
@@ -27,6 +34,12 @@ namespace modules {
 
     void GLFWOpenGLModule::framebufferSizeChangedCallback(GLFWwindow* window, int width, int height)
     {
+        glViewport(0, 0, width, height);
+    }
+
+    GLFWwindow* GLFWOpenGLModule::getWindow() const
+    {
+        return window;
     }
 
     //    void GLFWOpenGLModule::processInput(GLFWwindow* window)

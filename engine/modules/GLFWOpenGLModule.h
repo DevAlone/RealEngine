@@ -4,6 +4,9 @@
 
 #include <engine/Module.h>
 
+#define GLEW_STATIC
+#include <GL/glew.h>
+
 #include <GLFW/glfw3.h>
 
 #include <iostream>
@@ -14,6 +17,8 @@ namespace modules {
     public:
         GLFWOpenGLModule(Core* core, unsigned windowWidth, unsigned windowHeight, std::string name = "");
         virtual ~GLFWOpenGLModule();
+
+        GLFWwindow* getWindow() const;
 
     protected:
         static void framebufferSizeChangedCallback(GLFWwindow* window, int width, int height);

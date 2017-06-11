@@ -12,7 +12,7 @@ SOURCES += main.cpp \
     engine/exceptions/UnableToDetermineWorkerType.cpp \
     TestGraphicsWorker.cpp
 
-LIBS += -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread
+LIBS += -lGLEW -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread
 
 
 DEFINES += LINUX
