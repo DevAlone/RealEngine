@@ -77,17 +77,36 @@ void Core::registerGraphicsWorkers(std::vector<std::shared_ptr<GraphicsWorker> >
 
 int Core::exec()
 {
-    // основной цикл приложения
-    // здесь планировщик
-    std::cout << "exec" << std::endl;
-    while (true /* TODO: || something */) {
+    // TODO: move it into another thread
+    //    // основной цикл приложения
+    //    // здесь планировщик
+    //    std::cout << "exec" << std::endl;
+    //    while (true /* TODO: || something */) {
 
-#ifdef LINUX
-        usleep(1 * 1000);
-#endif
-#ifdef WINDOWS
-        Sleep(1);
-#endif
+    //#ifdef LINUX
+    //        usleep(1 * 1000);
+    //#endif
+    //#ifdef WINDOWS
+    //        Sleep(1);
+    //#endif
+    //    }
+
+    // TODO: finish it
+    while (true /* TODO: addSomeCondition */) {
+        for (auto& worker : beforeGraphicsWorkers) {
+            // параллельная обработка
+        }
+        // ожидаение завершения
+        for (auto& worker : beforeGraphicsSynchronizedWorkers) {
+            // последовательная обработка
+            // синхронизировать с independentSynchronizedWorkers
+        }
+        // графика
+        // TODO: предусмотреть возможность параллельной обработки graphicsWorker'ов
+        for (auto& graphicsWorker : graphicsWorkers) {
+            // TODO: add time
+            graphicsWorker->draw(0);
+        }
     }
 
     return 0;
@@ -95,23 +114,6 @@ int Core::exec()
 
 void Core::gameLoop(Core* core)
 {
-    // TODO: finish it
-    while (true /* TODO: addSomeCondition */) {
-        for (auto& worker : core->beforeGraphicsWorkers) {
-            // параллельная обработка
-        }
-        // ожидаение завершения
-        for (auto& worker : core->beforeGraphicsSynchronizedWorkers) {
-            // последовательная обработка
-            // синхронизировать с independentSynchronizedWorkers
-        }
-        // графика
-        // TODO: предусмотреть возможность параллельной обработки graphicsWorker'ов
-        for (auto& graphicsWorker : core->graphicsWorkers) {
-            // TODO: add time
-            graphicsWorker->draw(0);
-        }
-    }
 }
 
 void Core::independentWorkersHandler(Core* core)
