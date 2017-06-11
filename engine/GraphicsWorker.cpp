@@ -1,4 +1,4 @@
-#include "graphicsworker.h"
+#include "GraphicsWorker.h"
 
 namespace engine {
 GraphicsWorker::GraphicsWorker(Core* core, Module *module, std::string name)

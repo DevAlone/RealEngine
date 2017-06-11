@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core.h"
-#include "graphicsworker.h"
-#include "module.h"
-#include "worker.h"
+#include "Core.h"
+#include "GraphicsWorker.h"
+#include "Module.h"
+#include "Worker.h"

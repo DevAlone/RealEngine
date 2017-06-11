@@ -18,15 +18,24 @@ namespace modules {
             throw std::exception();
         }
         glfwMakeContextCurrent(window);
-        glfwSetFramebufferSizeCallback(window, windowSizeChanged);
+        glfwSetFramebufferSizeCallback(window, framebufferSizeChangedCallback);
     }
     GLFWOpenGLModule::~GLFWOpenGLModule()
     {
         glfwTerminate();
     }
 
-    void GLFWOpenGLModule::windowSizeChanged(GLFWwindow* window, int width, int height)
+    void GLFWOpenGLModule::framebufferSizeChangedCallback(GLFWwindow* window, int width, int height)
     {
     }
+
+    //    void GLFWOpenGLModule::processInput(GLFWwindow* window)
+    //    {
+    //        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    //            glfwSetWindowShouldClose(window, true);
+    //            // TODO: send exit signal to core
+    //            exit(0);
+    //        }
+    //    }
 }
 }

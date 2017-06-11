@@ -4,13 +4,13 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    engine/exceptions/unabletodetermineworkertype.cpp \
-    engine/worker.cpp \
-    engine/core.cpp \
-    engine/module.cpp \
-    engine/graphicsworker.cpp \
     engine/modules/GLFWOpenGLModule.cpp \
-    testgraphicsworker.cpp
+    engine/Core.cpp \
+    engine/GraphicsWorker.cpp \
+    engine/Module.cpp \
+    engine/Worker.cpp \
+    engine/exceptions/UnableToDetermineWorkerType.cpp \
+    TestGraphicsWorker.cpp
 
 LIBS += -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread
 
@@ -18,11 +18,6 @@ LIBS += -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm 
 DEFINES += LINUX
 
 HEADERS += \
-    engine/exceptions/unabletodetermineworkertype.h \
-    engine/worker.h \
-    engine/core.h \
-    engine/module.h \
-    engine/graphicsworker.h \
     engine/includes.h \
     engine/forwards.h \
     engine/modules/forwards.h \
@@ -34,4 +29,9 @@ HEADERS += \
     engine/workers/forwards.h \
     engine/workers/includes.h \
     engine/modules/GLFWOpenGLModule.h \
-    testgraphicsworker.h
+    engine/Core.h \
+    engine/GraphicsWorker.h \
+    engine/Module.h \
+    engine/Worker.h \
+    TestGraphicsWorker.h \
+    engine/exceptions/UnableToDetermineWorkerType.h

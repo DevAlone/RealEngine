@@ -1,4 +1,4 @@
-#include "testgraphicsworker.h"
+#include "TestGraphicsWorker.h"
 
 #include <iostream>
 

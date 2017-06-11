@@ -2,7 +2,7 @@
 #include <memory>
 
 #include "engine/includes.h"
-#include "testgraphicsworker.h"
+#include "TestGraphicsWorker.h"
 #include <engine/modules/includes.h>
 
 using namespace std;

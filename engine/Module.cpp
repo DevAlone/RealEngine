@@ -1,4 +1,4 @@
-#include "module.h"
+#include "Module.h"
 
 namespace engine {
 Module::Module(Core* core, std::string name)

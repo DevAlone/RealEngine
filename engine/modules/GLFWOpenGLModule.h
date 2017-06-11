@@ -2,7 +2,7 @@
 
 #include "forwards.h"
 
-#include <engine/module.h>
+#include <engine/Module.h>
 
 #include <GLFW/glfw3.h>
 
@@ -16,7 +16,8 @@ namespace modules {
         virtual ~GLFWOpenGLModule();
 
     protected:
-        static void windowSizeChanged(GLFWwindow* window, int width, int height);
+        static void framebufferSizeChangedCallback(GLFWwindow* window, int width, int height);
+        //        static void processInput(GLFWwindow* window);
 
     private:
         GLFWwindow* window;

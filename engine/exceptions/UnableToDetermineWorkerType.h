@@ -7,7 +7,6 @@
 #include <string>
 
 namespace engine {
-
 namespace exceptions {
     class UnableToDetermineWorkerType : public std::logic_error {
     public:
@@ -15,4 +14,3 @@ namespace exceptions {
     };
 }
 }
-

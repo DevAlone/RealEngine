@@ -1,4 +1,4 @@
-#include "core.h"
+#include "Core.h"
 
 namespace engine {
 Core::Core()
