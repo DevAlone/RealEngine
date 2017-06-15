@@ -3,20 +3,25 @@
 
 #include "TestGraphicsWorker.h"
 #include "engine/includes.h"
-#include <engine/modules/includes.h>
+#include "engine/modules/opengl/includes.h"
+
+using namespace engine;
+using namespace engine::modules::opengl;
 
 using namespace std;
 
 int main(int argc, char* argv[])
 {
+    // TODO: add logger
+    // TODO: add framework for tests
+
     //    std::cout << glGetString(GL_VERSION) << std::endl;
     //    while (true)
     //        ;
-    // TODO: add logger
 
-    engine::Core core;
+    Core core;
 
-    auto glfwOpenGLModule = std::make_shared<engine::modules::GLFWOpenGLModule>(&core, 800, 600);
+    auto glfwOpenGLModule = std::make_shared<GLFWOpenGLModule>(&core, 800, 600);
 
     auto testGraphicsWorker = std::make_shared<TestGraphicsWorker>(&core, glfwOpenGLModule.get());
     glfwOpenGLModule->addGraphicsWorker(testGraphicsWorker);
