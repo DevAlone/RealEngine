@@ -1,4 +1,5 @@
 #include "GLSLShader.h"
+#include "exceptions/includes.h"
 
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
@@ -8,13 +9,13 @@
 namespace engine {
 namespace modules {
     namespace opengl {
-        GLSLShader::GLSLShader(const std::string& sourceCode, GLSL_SHADER_VERSION version, GLSL_SHADER_TYPE type)
-            : type(type)
-            , version(version)
+        GLSLShader::GLSLShader(const std::string& sourceCode, GLSL_SHADER_VERSION version, GLSL_OPENGL_MODE mode)
+            : version(version)
+            , mode(mode)
         {
             this->sourceCode = std::string("#version ") + std::to_string(static_cast<int>(version)) + " ";
-            switch (type) {
-            case GLSL_SHADER_TYPE::CORE:
+            switch (mode) {
+            case GLSL_OPENGL_MODE::CORE:
                 this->sourceCode += "core\n";
                 break;
             default:
@@ -22,7 +23,8 @@ namespace modules {
                 // TODO: //
                 break;
             }
-            this->sourceCode = sourceCode;
+            this->sourceCode += sourceCode;
+            int a;
         }
 
         GLSLShader::~GLSLShader()
@@ -35,13 +37,22 @@ namespace modules {
         {
             _isCleaned = false;
             _isInitialized = true;
+
+            id = glCreateShader(int(type));
+            // TODO: todo
+            char* shaderCodeArray = new char[sourceCode.size() + 1];
+            std::copy(sourceCode.begin(), sourceCode.end(), shaderCodeArray);
+            shaderCodeArray[sourceCode.size()] = '\0';
+
+            glShaderSource(id, 1, &shaderCodeArray, nullptr);
+
+            delete[] shaderCodeArray;
         }
 
         void GLSLShader::compile()
         {
             if (!_isInitialized)
-                // TODO: make special exception type
-                throw std::exception();
+                throw exceptions::UnableToCompileGLSLShader(this, "Shader is not initialized");
 
             glCompileShader(id);
             int isSuccess;
@@ -49,9 +60,7 @@ namespace modules {
             glGetShaderiv(id, GL_COMPILE_STATUS, &isSuccess);
             if (!isSuccess) {
                 glGetShaderInfoLog(id, 512, nullptr, infoLog);
-                //std::cerr << "error compiling shader 1" << infoLog << std::endl;
-                // TODO: make exceptions
-                throw std::exception();
+                throw exceptions::UnableToCompileGLSLShader(this, infoLog);
             }
 
             _isCompiled = true;

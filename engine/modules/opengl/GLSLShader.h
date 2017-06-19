@@ -9,13 +9,17 @@ namespace modules {
             GL_330 = 330,
             GL_440 = 440
         };
-        enum class GLSL_SHADER_TYPE {
+        enum class GLSL_OPENGL_MODE {
             CORE
+        };
+        enum class GLSL_SHADER_TYPE : int {
+            VERTEX,
+            FRAGMENT
         };
 
         class GLSLShader {
         public:
-            GLSLShader(const std::string& sourceCode, GLSL_SHADER_VERSION version, GLSL_SHADER_TYPE type = GLSL_SHADER_TYPE::CORE);
+            GLSLShader(const std::string& sourceCode, GLSL_SHADER_VERSION version, GLSL_OPENGL_MODE mode = GLSL_OPENGL_MODE::CORE);
             ~GLSLShader();
 
             virtual void init();
@@ -30,6 +34,7 @@ namespace modules {
 
         protected:
             std::string sourceCode;
+            GLSL_OPENGL_MODE mode;
             GLSL_SHADER_TYPE type;
             GLSL_SHADER_VERSION version;
             bool _isInitialized = false;

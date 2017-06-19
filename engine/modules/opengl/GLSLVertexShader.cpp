@@ -6,23 +6,15 @@ namespace engine {
 namespace modules {
     namespace opengl {
 
-        GLSLVertexShader::GLSLVertexShader(const std::string& sourceCode, GLSL_SHADER_VERSION version, GLSL_SHADER_TYPE type)
-            : GLSLShader(sourceCode, version, type)
+        GLSLVertexShader::GLSLVertexShader(const std::string& sourceCode, GLSL_SHADER_VERSION version, GLSL_OPENGL_MODE mode)
+            : GLSLShader(sourceCode, version, mode)
         {
         }
 
         void GLSLVertexShader::init()
         {
+            type = GLSL_SHADER_TYPE(GL_VERTEX_SHADER);
             GLSLShader::init();
-            id = glCreateShader(GL_VERTEX_SHADER);
-
-            char* shaderCodeArray = new char[sourceCode.size() + 1];
-            std::copy(sourceCode.begin(), sourceCode.end(), shaderCodeArray);
-            shaderCodeArray[sourceCode.size()] = '\0';
-
-            glShaderSource(id, 1, &shaderCodeArray, nullptr);
-
-            delete[] shaderCodeArray;
         }
     }
 }

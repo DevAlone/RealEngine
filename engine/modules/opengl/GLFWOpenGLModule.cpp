@@ -8,6 +8,11 @@ namespace modules {
             , windowWidth(windowWidth)
             , windowHeight(windowHeight)
         {
+            static int objectsCount = 0;
+            objectsCount++;
+            //            if (objectsCount > 1)
+            //                throw std::exception();
+
             glfwInit();
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
