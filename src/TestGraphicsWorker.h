@@ -36,7 +36,7 @@ private:
                 const vec4 vertices[3] = vec4[3](
         vec4(0, 0, 0.5, 1.0),
         vec4(0.5, 0, 0.5, 1.0),
-        vec4(0.5, 0.5, 0.5, 0.1)
+        vec4(0.5, 0.5, 0.5, 1.0)
         );
 //if(gl_VertexID >2) {
 //            gl_Position = vec4(-1, -1, 0.5, 1.0);
@@ -53,11 +53,11 @@ private:
             vs_out.color = vec4(1.0, 0.0, 0.0, 1.0);
             })";
     const char* tesselationControlShaderSource =
-        R"(
-            layout (vertices = 3) out;
+        R"(layout (vertices = 3) out;
 
             void main(void)
             {
+
             if(gl_InvocationID == 0) {
             gl_TessLevelInner[0] = 5.0;
             gl_TessLevelOuter[0] = 5.0;

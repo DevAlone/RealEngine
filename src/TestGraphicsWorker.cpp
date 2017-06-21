@@ -18,17 +18,30 @@ TestGraphicsWorker::TestGraphicsWorker(engine::Core* core, engine::Module* modul
 
     glfwMakeContextCurrent(glfwOpenGLModule->getWindow());
 
-    auto vertexShader = std::make_shared<GLSLVertexShader>(vertexShaderSource, GLSL_SHADER_VERSION::GL_330);
+    auto openGLVersion = GLSL_SHADER_VERSION::GL_330;
+
+    auto vertexShader = std::make_shared<GLSLVertexShader>(vertexShaderSource, openGLVersion);
     vertexShader->init();
     vertexShader->compile();
 
-    auto fragmentShader = std::make_shared<GLSLFragmentShader>(fragmentShaderSource, GLSL_SHADER_VERSION::GL_330);
+    auto fragmentShader = std::make_shared<GLSLFragmentShader>(fragmentShaderSource, openGLVersion);
     fragmentShader->init();
     fragmentShader->compile();
+
+    auto tesselationControlShader = std::make_shared<GLSLTesselationControlShader>(tesselationControlShaderSource, openGLVersion);
+    tesselationControlShader->init();
+    tesselationControlShader->compile();
+
+    auto tesselationEvaluationShader = std::make_shared<GLSLTesselationEvaluationShader>(tesselationEvaluationShaderSource, openGLVersion);
+    tesselationEvaluationShader->init();
+    tesselationEvaluationShader->compile();
 
     shaderProgram.init();
     shaderProgram.attachShader(vertexShader);
     shaderProgram.attachShader(fragmentShader);
+    shaderProgram.attachShader(tesselationControlShader);
+    //    glAttachShader(shaderProgram.getId(), tesselationControlShaderId);
+    shaderProgram.attachShader(tesselationEvaluationShader);
     shaderProgram.link();
 
     //

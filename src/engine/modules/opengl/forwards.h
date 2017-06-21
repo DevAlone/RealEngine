@@ -11,6 +11,8 @@ namespace modules {
         class GLSLVertexShader;
         class GLSLFragmentShader;
         class GLSLProgram;
+        class GLSLTesselationControlShader;
+        class GLSLTesselationEvaluationShader;
     }
 }
 }
