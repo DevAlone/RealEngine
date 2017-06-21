@@ -21,19 +21,10 @@ public:
 
 private:
     engine::modules::opengl::GLSLProgram shaderProgram;
-    GLuint vboId, vaoId;
-    //    const char* vertexShaderSource =
-    //        R"(#version 330 core
-    //        layout (location = 0) in vec3 aPos;
-    //        void main()
-    //        {
-    //            gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-    //        })";
+    GLuint vaoId;
     const char* vertexShaderSource =
         R"(
-
-            layout (location = 0) in vec4 offset;
-            layout (location = 1) in vec4 color;
+            layout (location = 0) in vec4 color;
 
             out VS_OUT
             {
@@ -42,11 +33,24 @@ private:
 
             void main()
             {
-                const vec4 vertices[3] = vec4[3](vec4(0.25, -0.25, 0.5, 1.0), vec4(-0.25, -0.25, 0.5, 1.0), vec4(0.25, 0.25, 0.5, 0.1));
+                const vec4 vertices[3] = vec4[3](
+        vec4(0, 0, 0.5, 1.0),
+        vec4(0.5, 0, 0.5, 1.0),
+        vec4(0.5, 0.5, 0.5, 0.1)
+        );
+//if(gl_VertexID >2) {
+//            gl_Position = vec4(-1, -1, 0.5, 1.0);
+//            return;
+//            }
 
-                gl_Position = vertices[gl_VertexID] + offset;
+
+
+
+                gl_Position = vertices[gl_VertexID];
 
                 vs_out.color = color;
+            if(gl_VertexID > 1)
+            vs_out.color = vec4(1.0, 0.0, 0.0, 1.0);
             })";
     const char* tesselationControlShaderSource =
         R"(
@@ -62,6 +66,16 @@ private:
             }
             gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
             )";
+    const char* tesselationEvaluationShaderSource =
+        R"(
+            layout (triangles, equal_spacing, cw) in;
+
+            void main(void)
+            {
+            gl_Position = (gl_TessCoord.x * gl_in[0].gl_Position +
+            gl_TessCoord.y * gl_in[1].gl_Position +
+            gl_TessCoord.z * gl_in[2].gl_Position);
+            )";
     const char* fragmentShaderSource =
         R"(
         in VS_OUT
@@ -73,7 +87,7 @@ private:
 
         void main()
         {
-            color = fs_in.color; // vec4(1.0f, 0.0f, 0.0f, 1.0f);
+            color = fs_in.color;
         })";
 
     GLFWOpenGLModule* glfwOpenGLModule;

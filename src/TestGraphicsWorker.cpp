@@ -67,14 +67,15 @@ TestGraphicsWorker::TestGraphicsWorker(engine::Core* core, engine::Module* modul
     //    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     //    glBindVertexArray(0);
-    glCreateVertexArrays(1, &vaoId);
+    //    glCreateVertexArrays(1, &vaoId);
+    glGenVertexArrays(1, &vaoId);
     glBindVertexArray(vaoId);
 }
 
 TestGraphicsWorker::~TestGraphicsWorker()
 {
     glDeleteVertexArrays(1, &vaoId);
-    glDeleteBuffers(1, &vboId);
+    //    glDeleteBuffers(1, &vboId);
 }
 
 void TestGraphicsWorker::draw(unsigned microseconds)
@@ -84,25 +85,31 @@ void TestGraphicsWorker::draw(unsigned microseconds)
 
     glfwPollEvents(); //TODO: вынести в другой worker
 
-    //    glClearColor(1.0, 1.0, 1.0, 1.0);
-    //    glClear(GL_COLOR_BUFFER_BIT);
     std::chrono::milliseconds currTime = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::system_clock::now().time_since_epoch());
     auto currentTime = currTime.count() / 100;
 
-    const GLfloat color[] = { (float)sin(currentTime) * 0.5f + 0.5f,
-        (float)cos(currentTime) * 0.5f + 0.5f,
-        0.0, 1.0f };
-    glClearBufferfv(GL_COLOR, 0, color);
+    //    const GLfloat color[] = { (float)sin(currentTime) * 0.5f + 0.5f,
+    //        (float)cos(currentTime) * 0.5f + 0.5f,
+    //        0.0, 1.0f };
+    //    const GLfloat color[] = { 0.1, 0.1, 0.1 };
+    //    glClearBufferfv(GL_COLOR, 0, color);
+    glClearColor(0.1, 0.1, 0.1, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(shaderProgram.getId());
 
-    const GLfloat offset[4] = { (float)sin(currentTime), 0.2, 0.3, 0 };
-    glVertexAttrib4fv(0, offset);
-    glVertexAttrib4f(1, 0.0, sin(currentTime) >= 0 ? sin(currentTime) : -sin(currentTime), 0.0, 1.0);
+    glBindVertexArray(vaoId);
 
-    //    glBindVertexArray(vaoId);
-    glPointSize(25);
+    glVertexAttrib4f(0,
+        0,
+        1,
+        0.0,
+        1.0);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //    glPointSize(25);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+
     glfwSwapBuffers(windowId);
 }
