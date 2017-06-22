@@ -28,20 +28,24 @@ TestGraphicsWorker::TestGraphicsWorker(engine::Core* core, engine::Module* modul
     fragmentShader->init();
     fragmentShader->compile();
 
-    auto tesselationControlShader = std::make_shared<GLSLTesselationControlShader>(tesselationControlShaderSource, openGLVersion);
-    tesselationControlShader->init();
-    tesselationControlShader->compile();
+    auto geometryShader = std::make_shared<GLSLGeometryShader>(geometryShaderSource, openGLVersion);
+    geometryShader->init();
+    geometryShader->compile();
 
-    auto tesselationEvaluationShader = std::make_shared<GLSLTesselationEvaluationShader>(tesselationEvaluationShaderSource, openGLVersion);
-    tesselationEvaluationShader->init();
-    tesselationEvaluationShader->compile();
+    //    auto tesselationControlShader = std::make_shared<GLSLTesselationControlShader>(tesselationControlShaderSource, openGLVersion);
+    //    tesselationControlShader->init();
+    //    tesselationControlShader->compile();
+
+    //    auto tesselationEvaluationShader = std::make_shared<GLSLTesselationEvaluationShader>(tesselationEvaluationShaderSource, openGLVersion);
+    //    tesselationEvaluationShader->init();
+    //    tesselationEvaluationShader->compile();
 
     shaderProgram.init();
     shaderProgram.attachShader(vertexShader);
     shaderProgram.attachShader(fragmentShader);
-    shaderProgram.attachShader(tesselationControlShader);
-    //    glAttachShader(shaderProgram.getId(), tesselationControlShaderId);
-    shaderProgram.attachShader(tesselationEvaluationShader);
+    //    shaderProgram.attachShader(tesselationControlShader);
+    //    shaderProgram.attachShader(tesselationEvaluationShader);
+    //    shaderProgram.attachShader(geometryShader);
     shaderProgram.link();
 
     //
@@ -121,7 +125,7 @@ void TestGraphicsWorker::draw(unsigned microseconds)
         1.0);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    //    glPointSize(25);
+    glPointSize(25);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     glfwSwapBuffers(windowId);

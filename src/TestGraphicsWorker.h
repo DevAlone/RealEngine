@@ -36,7 +36,7 @@ private:
                 const vec4 vertices[3] = vec4[3](
         vec4(0, 0, 0.5, 1.0),
         vec4(0.5, 0, 0.5, 1.0),
-        vec4(0.5, 0.5, 0.5, 1.0)
+        vec4(1.5, 0.5, 0.5, 1.0)
         );
 //if(gl_VertexID >2) {
 //            gl_Position = vec4(-1, -1, 0.5, 1.0);
@@ -76,6 +76,26 @@ private:
             gl_TessCoord.y * gl_in[1].gl_Position +
             gl_TessCoord.z * gl_in[2].gl_Position);
             )";
+
+    const char* geometryShaderSource =
+        R"(layout (triangles) in;
+            layout (points, max_vertices = 3) out;
+
+        out VS_OUT
+        {
+            vec4 color;
+        } gs_out;
+            void main(void)
+            {
+            int i;
+            for(i = 0; i < gl_in.length(); i++) {
+            gl_Position = gl_in[i].gl_Position;
+            EmitVertex();
+            }
+    //            EndPrimitive();
+            gs_out.color = vec4(1.0, 0, 0, 1.0);
+            }
+        )";
     const char* fragmentShaderSource =
         R"(
         in VS_OUT
@@ -88,6 +108,7 @@ private:
         void main()
         {
             color = fs_in.color;
+//            color = vec4(1.0, 0, 0, 1.0);
         })";
 
     GLFWOpenGLModule* glfwOpenGLModule;

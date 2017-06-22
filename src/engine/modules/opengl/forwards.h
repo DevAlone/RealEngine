@@ -13,6 +13,7 @@ namespace modules {
         class GLSLProgram;
         class GLSLTesselationControlShader;
         class GLSLTesselationEvaluationShader;
+        class GLSLGeometryShader;
     }
 }
 }
