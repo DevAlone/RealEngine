@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ThreadPool.hpp"
 #include "forwards.h"
 #include "includes.h"
 
@@ -14,22 +15,23 @@
 #include <boost/signals2.hpp>
 
 namespace engine {
+
 class Core {
 public:
     Core();
     virtual ~Core();
-    Module* m;
+    // TODO: change to std::unique_ptr
     void addModule(std::shared_ptr<Module> module);
     // module removes with its workers
     void removeModulesByName(const std::string* name) = delete;
     //    void removeLastModule() = delete;
 
     void registerWorker(std::shared_ptr<Worker> worker);
-    void registerWorkers(std::vector<std::shared_ptr<Worker> >& workers);
+    void registerWorkers(std::vector<std::shared_ptr<Worker>>& workers);
     void unregisterWorkersByName(const std::string* name) = delete;
 
     void registerGraphicsWorker(std::shared_ptr<GraphicsWorker> graphicsWorker);
-    void registerGraphicsWorkers(std::vector<std::shared_ptr<GraphicsWorker> >& graphicsWorkers);
+    void registerGraphicsWorkers(std::vector<std::shared_ptr<GraphicsWorker>>& graphicsWorkers);
     void unregisterGraphicsWorkersByName(const std::string* name) = delete;
 
     int exec();
@@ -40,28 +42,27 @@ public:
     void setPausedState(bool value);
     boost::signals2::signal<void(bool)> pausedStateChanged;
 
+    bool isAlive() const;
+
 private:
     unsigned hardware_threads;
-
-    //
-    //    std::unique_ptr<std::thread> workersHandlerThread;
-    std::unique_ptr<std::thread> gameLoopThread;
     std::unique_ptr<std::thread> independentWorkersHandlerThread;
-    struct WorkerWrapper {
-        std::shared_ptr<Worker> worker;
-        std::chrono::time_point<std::chrono::high_resolution_clock> previousHandleTime;
-    };
 
-    std::vector<std::shared_ptr<Module> > modules;
+    std::vector<std::shared_ptr<Module>> modules;
 
-    std::vector<std::shared_ptr<Worker> > workers;
-    std::vector<std::shared_ptr<Worker> > beforeGraphicsWorkers;
-    std::vector<std::shared_ptr<Worker> > beforeGraphicsSynchronizedWorkers;
-    std::vector<std::shared_ptr<Worker> > independentWorkers;
-    std::vector<std::shared_ptr<Worker> > independentSynchronizedWorkers;
+    std::vector<std::shared_ptr<Worker>> workers;
 
-    std::vector<std::shared_ptr<GraphicsWorker> > graphicsWorkers;
+    std::vector<std::shared_ptr<Worker>> beforeGraphicsWorkers;
+    std::vector<std::shared_ptr<Worker>> beforeGraphicsSynchronizedWorkers;
+    std::vector<std::shared_ptr<Worker>> independentWorkers;
+    std::vector<std::shared_ptr<Worker>> independentSynchronizedWorkers;
 
-    bool paused;
+    std::vector<std::shared_ptr<GraphicsWorker>> graphicsWorkers;
+
+    std::unique_ptr<ThreadPool> beforeGraphicsWorkersThreadPool;
+
+    bool _isPaused;
+    bool _isAlive = true;
+    std::chrono::time_point<std::chrono::high_resolution_clock> getTimePoint();
 };
 }

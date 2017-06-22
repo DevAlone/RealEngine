@@ -10,14 +10,12 @@ Core::Core()
 
     std::cout << "hardware_threads is " << hardware_threads << std::endl;
 
-    //    modulesHandlerThread = std::unique_ptr<std::thread>(new std::thread(modulesHandler, this));
-    gameLoopThread = std::unique_ptr<std::thread>(new std::thread(gameLoop, this));
     independentWorkersHandlerThread = std::unique_ptr<std::thread>(new std::thread(independentWorkersHandler, this));
+    //    beforeGraphicsWorkersThreadPool = std::make_unique<ThreadPool>(hardware_threads);
 }
 
 Core::~Core()
 {
-    gameLoopThread->join();
     independentWorkersHandlerThread->join();
 }
 
@@ -45,13 +43,12 @@ void Core::registerWorker(std::shared_ptr<Worker> worker)
         break;
     default:
         // TODO: add normal exception types
-        throw exceptions::UnableToDetermineWorkerType(worker->getType());
+        throw exceptions::UnableToDetermineWorkerType(worker.get());
         break;
     }
-    // TODO: если worker не добавился, удалить из общего списка
 }
 
-void Core::registerWorkers(std::vector<std::shared_ptr<Worker> >& workers)
+void Core::registerWorkers(std::vector<std::shared_ptr<Worker>>& workers)
 {
     for (auto worker : workers) {
         registerWorker(worker);
@@ -62,52 +59,56 @@ void Core::registerGraphicsWorker(std::shared_ptr<GraphicsWorker> graphicsWorker
     graphicsWorkers.push_back(graphicsWorker);
 }
 
-void Core::registerGraphicsWorkers(std::vector<std::shared_ptr<GraphicsWorker> >& graphicsWorkers)
+void Core::registerGraphicsWorkers(std::vector<std::shared_ptr<GraphicsWorker>>& graphicsWorkers)
 {
     for (auto& graphicsWorker : graphicsWorkers)
         registerGraphicsWorker(graphicsWorker);
 }
 
-#ifdef LINUX
-#include <unistd.h>
-#endif
-#ifdef WINDOWS
-#include <windows.h>
-#endif
-
 int Core::exec()
 {
-    // TODO: move it into another thread
-    //    // основной цикл приложения
-    //    // здесь планировщик
-    //    std::cout << "exec" << std::endl;
-    //    while (true /* TODO: || something */) {
-
-    //#ifdef LINUX
-    //        usleep(1 * 1000);
-    //#endif
-    //#ifdef WINDOWS
-    //        Sleep(1);
-    //#endif
-    //    }
-
     // TODO: finish it
-    while (true /* TODO: addSomeCondition */) {
-        for (auto& worker : beforeGraphicsWorkers) {
-            // параллельная обработка
+    while (_isAlive) {
+
+        {
+            // TODO: убрать расход ресурсов на выделение памяти и прочее
+            std::vector<std::future<void>> tasks;
+            for (auto& worker : beforeGraphicsWorkers) {
+                tasks.push_back(beforeGraphicsWorkersThreadPool->enqueue(
+                    [this, worker] {
+                        auto now = getTimePoint();
+                        auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
+                        worker->handle(dt);
+                        worker->previousHandlingTime = now;
+                    }));
+            }
+
+            for (auto& task : tasks) {
+                task.wait();
+            }
         }
+
         // ожидаение завершения
         for (auto& worker : beforeGraphicsSynchronizedWorkers) {
+            auto now = getTimePoint();
+            auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
+            worker->handle(dt);
+            worker->previousHandlingTime = now;
+
             // последовательная обработка
-            // синхронизировать с independentSynchronizedWorkers
+            // синхронизировать с independentSynchronizedWorkers?
         }
         // графика
         // TODO: предусмотреть возможность параллельной обработки graphicsWorker'ов
         for (auto& graphicsWorker : graphicsWorkers) {
-            // TODO: add time
-            graphicsWorker->draw(0);
+            auto now = getTimePoint();
+            auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - graphicsWorker->previousHandlingTime).count();
+            graphicsWorker->draw(dt);
+            graphicsWorker->previousHandlingTime = now;
         }
     }
+
+    independentWorkersHandlerThread->join();
 
     return 0;
 }
@@ -119,7 +120,7 @@ void Core::gameLoop(Core* core)
 void Core::independentWorkersHandler(Core* core)
 {
     // TODO: finish it
-    while (true /* TODO: addSomeCondition */) {
+    while (core->_isAlive) {
         for (auto& worker : core->independentWorkers) {
             // параллельная обработка
         }
@@ -132,13 +133,23 @@ void Core::independentWorkersHandler(Core* core)
 
 bool Core::isPaused() const
 {
-    return paused;
+    return _isPaused;
 }
 
 void Core::setPausedState(bool value)
 {
-    paused = value;
-    pausedStateChanged(paused);
+    _isPaused = value;
+    pausedStateChanged(_isPaused);
+}
+
+bool Core::isAlive() const
+{
+    return _isAlive;
+}
+
+std::chrono::time_point<std::chrono::high_resolution_clock> Core::getTimePoint()
+{
+    return std::chrono::high_resolution_clock::now();
 }
 
 //void Core::modulesHandler(Core* core)

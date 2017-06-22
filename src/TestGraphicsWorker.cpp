@@ -97,6 +97,7 @@ TestGraphicsWorker::~TestGraphicsWorker()
 
 void TestGraphicsWorker::draw(unsigned microseconds)
 {
+    std::cout << "dt: " << microseconds << std::endl;
     auto windowId = glfwOpenGLModule->getWindow();
     glfwMakeContextCurrent(windowId);
 

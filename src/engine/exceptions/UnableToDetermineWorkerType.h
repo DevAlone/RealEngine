@@ -10,7 +10,10 @@ namespace engine {
 namespace exceptions {
     class UnableToDetermineWorkerType : public std::logic_error {
     public:
-        UnableToDetermineWorkerType(WORKER_TYPE type, const std::string& message = "");
+        UnableToDetermineWorkerType(Worker* worker, const std::string& message = "");
+
+    private:
+        Worker* worker;
     };
 }
 }

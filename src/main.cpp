@@ -10,6 +10,23 @@ using namespace engine::modules::opengl;
 
 using namespace std;
 
+class TestWorker : public engine::Worker {
+public:
+    TestWorker(Core* core, Module* module)
+        : engine::Worker(core, module)
+    {
+    }
+
+    virtual void handle(unsigned microseconds)
+    {
+        std::cout << "TestWorker: " << microseconds << std::endl;
+        int a = 10;
+        for (long long i = 0; i < 10000000000LL; i++) {
+            a++;
+        }
+    }
+};
+
 int main(int argc, char* argv[])
 {
     // TODO: add logger
@@ -45,6 +62,14 @@ int main(int argc, char* argv[])
     core.registerGraphicsWorker(testGraphicsWorker);
 
     core.addModule(glfwOpenGLModule);
+
+    auto testWorker = std::make_shared<TestWorker>(&core, nullptr);
+    core.registerWorker(testWorker);
+    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
+    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
+    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
+    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
+    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
 
     return core.exec();
 }
