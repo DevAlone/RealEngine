@@ -29,6 +29,7 @@ public:
 
 int main(int argc, char* argv[])
 {
+
     // TODO: add logger
     // TODO: add framework for tests
 
@@ -38,23 +39,6 @@ int main(int argc, char* argv[])
 
     Core core;
 
-    //    auto glfwOpenGLModule1 = std::make_shared<GLFWOpenGLModule>(&core, 800, 600);
-    //    auto glfwOpenGLModule = std::make_shared<GLFWOpenGLModule>(&core, 800, 600);
-
-    //    auto testGraphicsWorker = std::make_shared<TestGraphicsWorker>(&core, glfwOpenGLModule.get());
-    //    auto testGraphicsWorker1 = std::make_shared<TestGraphicsWorker>(&core, glfwOpenGLModule1.get());
-    //    glfwOpenGLModule->addGraphicsWorker(testGraphicsWorker);
-    //    glfwOpenGLModule->addGraphicsWorker(testGraphicsWorker1);
-
-    //    core.registerGraphicsWorker(testGraphicsWorker);
-    //    core.registerGraphicsWorker(testGraphicsWorker1);
-
-    //    core.addModule(glfwOpenGLModule);
-    //    core.addModule(glfwOpenGLModule1);
-
-    //    while (true)
-    //        ;
-
     auto glfwOpenGLModule = std::make_shared<GLFWOpenGLModule>(&core, 800, 600);
     auto testGraphicsWorker = std::make_shared<TestGraphicsWorker>(&core, glfwOpenGLModule.get());
     glfwOpenGLModule->addGraphicsWorker(testGraphicsWorker);
@@ -63,13 +47,13 @@ int main(int argc, char* argv[])
 
     core.addModule(glfwOpenGLModule);
 
-    auto testWorker = std::make_shared<TestWorker>(&core, nullptr);
-    core.registerWorker(testWorker);
-    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
-    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
-    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
-    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
-    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
+    //    auto testWorker = std::make_shared<TestWorker>(&core, nullptr);
+    //    core.registerWorker(testWorker);
+    //    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
+    //    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
+    //    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
+    //    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
+    //    core.registerWorker(std::make_shared<TestWorker>(&core, nullptr));
 
     return core.exec();
 }

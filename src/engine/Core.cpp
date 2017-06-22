@@ -11,7 +11,7 @@ Core::Core()
     std::cout << "hardware_threads is " << hardware_threads << std::endl;
 
     independentWorkersHandlerThread = std::unique_ptr<std::thread>(new std::thread(independentWorkersHandler, this));
-    //    beforeGraphicsWorkersThreadPool = std::make_unique<ThreadPool>(hardware_threads);
+    beforeGraphicsWorkersThreadPool = std::make_unique<ThreadPool>(hardware_threads);
 }
 
 Core::~Core()
@@ -70,22 +70,20 @@ int Core::exec()
     // TODO: finish it
     while (_isAlive) {
 
-        {
-            // TODO: убрать расход ресурсов на выделение памяти и прочее
-            std::vector<std::future<void>> tasks;
-            for (auto& worker : beforeGraphicsWorkers) {
-                tasks.push_back(beforeGraphicsWorkersThreadPool->enqueue(
-                    [this, worker] {
-                        auto now = getTimePoint();
-                        auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
-                        worker->handle(dt);
-                        worker->previousHandlingTime = now;
-                    }));
-            }
+        // TODO: убрать расход ресурсов на выделение памяти и прочее
+        std::vector<std::future<void>> tasks;
+        for (auto& worker : beforeGraphicsWorkers) {
+            beforeGraphicsWorkersThreadPool->enqueue(
+                [this, worker] {
+                    auto now = getTimePoint();
+                    auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
+                    worker->handle(dt);
+                    worker->previousHandlingTime = now;
+                });
+        }
 
-            for (auto& task : tasks) {
-                task.wait();
-            }
+        for (auto& task : tasks) {
+            task.wait();
         }
 
         // ожидаение завершения
