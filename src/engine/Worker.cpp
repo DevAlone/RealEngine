@@ -2,17 +2,29 @@
 
 namespace engine {
 
-Worker::Worker(Core* core, Module* module, WORKER_TYPE type, bool synchronized, std::__cxx11::string name)
-    : core(core)
-    , module(module)
+Worker::Worker(Core* core, Module* module, WORKER_TYPE type, bool synchronized, const std::string& name)
+    : AbstractWorker(core, module, name)
     , type(type)
     , synchronized(synchronized)
-    , name(name)
+{
+}
+
+Worker::Worker(std::function<void(Worker*, unsigned microseconds)> function, Core* core, Module* module, WORKER_TYPE type, bool synchronized, const std::string& name)
+    : AbstractWorker(core, module, name)
+    , type(type)
+    , synchronized(synchronized)
+    , function(function)
 {
 }
 
 Worker::~Worker()
 {
+}
+
+void Worker::handle(unsigned microseconds)
+{
+    if (function)
+        function(this, microseconds);
 }
 
 WORKER_TYPE Worker::getType() const

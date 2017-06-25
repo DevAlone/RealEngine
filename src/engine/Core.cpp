@@ -71,32 +71,31 @@ int Core::exec()
     while (_isAlive) {
 
         // TODO: убрать расход ресурсов на выделение памяти и прочее
+        // parallel processing
         std::vector<std::future<void>> tasks;
         for (auto& worker : beforeGraphicsWorkers) {
-            beforeGraphicsWorkersThreadPool->enqueue(
+            tasks.push_back(beforeGraphicsWorkersThreadPool->enqueue(
                 [this, worker] {
                     auto now = getTimePoint();
                     auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
                     worker->handle(dt);
                     worker->previousHandlingTime = now;
-                });
+                }));
         }
 
-        for (auto& task : tasks) {
+        // wait for threads finishing
+        for (auto& task : tasks)
             task.wait();
-        }
 
-        // ожидаение завершения
+        // sequential processing
         for (auto& worker : beforeGraphicsSynchronizedWorkers) {
             auto now = getTimePoint();
             auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
             worker->handle(dt);
             worker->previousHandlingTime = now;
-
-            // последовательная обработка
-            // синхронизировать с independentSynchronizedWorkers?
         }
-        // графика
+
+        // graphics
         // TODO: предусмотреть возможность параллельной обработки graphicsWorker'ов
         for (auto& graphicsWorker : graphicsWorkers) {
             auto now = getTimePoint();
@@ -104,27 +103,39 @@ int Core::exec()
             graphicsWorker->draw(dt);
             graphicsWorker->previousHandlingTime = now;
         }
+
+        // TODO: add syncronization with workers add functions here
     }
 
-    independentWorkersHandlerThread->join();
-
     return 0;
-}
-
-void Core::gameLoop(Core* core)
-{
 }
 
 void Core::independentWorkersHandler(Core* core)
 {
     // TODO: finish it
     while (core->_isAlive) {
+        // TODO: optimize this shit
+        // parallel processing
+        std::vector<std::future<void>> tasks;
         for (auto& worker : core->independentWorkers) {
-            // параллельная обработка
+            core->independentWorkersThreadPool->enqueue([core, worker] {
+                auto now = core->getTimePoint();
+                auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
+                worker->handle(dt);
+                worker->previousHandlingTime = now;
+            });
         }
-        // ожидаение завершения
+        // waiting for finising
+        for (auto& task : tasks)
+            task.wait();
+
+        // sequential processing
         for (auto& worker : core->independentSynchronizedWorkers) {
             // последовательная обработка
+            auto now = core->getTimePoint();
+            auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
+            worker->handle(dt);
+            worker->previousHandlingTime = now;
         }
     }
 }
@@ -143,6 +154,11 @@ void Core::setPausedState(bool value)
 bool Core::isAlive() const
 {
     return _isAlive;
+}
+
+void Core::stop()
+{
+    _isAlive = false;
 }
 
 std::chrono::time_point<std::chrono::high_resolution_clock> Core::getTimePoint()

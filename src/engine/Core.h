@@ -16,6 +16,8 @@
 
 namespace engine {
 
+// TODO: add methods for executing tasks in threads
+// TODO: разобраться, почему один worker грузит все 6 ядер
 class Core {
 public:
     Core();
@@ -35,7 +37,6 @@ public:
     void unregisterGraphicsWorkersByName(const std::string* name) = delete;
 
     int exec();
-    static void gameLoop(Core* core);
     static void independentWorkersHandler(Core* core);
 
     bool isPaused() const;
@@ -43,6 +44,7 @@ public:
     boost::signals2::signal<void(bool)> pausedStateChanged;
 
     bool isAlive() const;
+    void stop();
 
 private:
     unsigned hardware_threads;
@@ -60,6 +62,7 @@ private:
     std::vector<std::shared_ptr<GraphicsWorker>> graphicsWorkers;
 
     std::unique_ptr<ThreadPool> beforeGraphicsWorkersThreadPool;
+    std::unique_ptr<ThreadPool> independentWorkersThreadPool;
 
     bool _isPaused;
     bool _isAlive = true;

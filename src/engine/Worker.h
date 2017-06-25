@@ -4,6 +4,7 @@
 #include "includes.h"
 
 #include <chrono>
+#include <functional>
 
 namespace engine {
 enum class WORKER_TYPE {
@@ -12,25 +13,23 @@ enum class WORKER_TYPE {
 };
 
 // TODO: Добавить период обработки или приоритет или что-нибудь подобное
-class Worker {
-    friend class Core;
-
+class Worker : public AbstractWorker {
 public:
-    Worker(Core* core, Module* module, WORKER_TYPE type = WORKER_TYPE::BEFORE_GRAPHICS, bool synchronized = false, std::string name = "");
+    Worker(Core* core, Module* module, WORKER_TYPE type = WORKER_TYPE::BEFORE_GRAPHICS, bool synchronized = false, const std::string& name = "");
+    Worker(std::function<void(Worker*, unsigned)> function, Core* core, Module* module, WORKER_TYPE type = WORKER_TYPE::BEFORE_GRAPHICS, bool synchronized = false, const std::string& name = "");
     virtual ~Worker();
 
-    virtual void handle(unsigned microseconds) = 0;
+    virtual void handle(unsigned microseconds);
 
     WORKER_TYPE getType() const;
 
     bool isSynchronized() const;
 
 protected:
-    Core* core;
-    Module* module;
     const WORKER_TYPE type;
     const bool synchronized;
-    std::string name;
-    std::chrono::time_point<std::chrono::high_resolution_clock> previousHandlingTime;
+
+private:
+    std::function<void(Worker*, unsigned)> function;
 };
 }

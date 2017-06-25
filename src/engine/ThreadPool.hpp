@@ -1,5 +1,4 @@
-#ifndef THREADPOOL_H
-#define THREADPOOL_H
+#pragma once
 
 #include <condition_variable>
 #include <functional>
@@ -84,5 +83,3 @@ private:
     std::condition_variable condition;
     bool _isStopped;
 };
-
-#endif // THREADPOOL_H
