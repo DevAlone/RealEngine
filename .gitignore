@@ -2,3 +2,4 @@ build*
 GameEngine.pro.user
 CodeStyle
 TODO
+.LICENSE_TEMPLATE
