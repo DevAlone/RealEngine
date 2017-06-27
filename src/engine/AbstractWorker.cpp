@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 #include "AbstractWorker.h"
 
 namespace engine {
@@ -33,5 +32,15 @@ AbstractWorker::AbstractWorker(Core* core, Module* module, const std::string& na
 const std::string& AbstractWorker::getName() const
 {
     return name;
+}
+
+unsigned AbstractWorker::getPeriod() const
+{
+    return period;
+}
+
+void AbstractWorker::setPeriod(const unsigned value)
+{
+    period = value;
 }
 }

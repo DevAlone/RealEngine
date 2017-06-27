@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 #pragma once
 
 #include "ThreadPool.hpp"
@@ -84,5 +83,6 @@ private:
     bool _isPaused;
     bool _isAlive = true;
     std::chrono::time_point<std::chrono::high_resolution_clock> getTimePoint();
+    static inline void handleWorker(Core* core, AbstractWorker* worker);
 };
 }

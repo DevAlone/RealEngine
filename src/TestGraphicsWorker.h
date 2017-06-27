@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 #ifndef TESTGRAPHICSWORKER_H
 #define TESTGRAPHICSWORKER_H
 
@@ -34,14 +33,14 @@ public:
     TestGraphicsWorker(engine::Core* core, engine::Module* module, std::string name = "test graphics worker");
     virtual ~TestGraphicsWorker();
 
-    virtual void draw(unsigned microseconds);
+    virtual void handle(unsigned microseconds);
 
 private:
     engine::modules::opengl::GLSLProgram shaderProgram;
     GLuint vaoId;
     const char* vertexShaderSource =
         R"(
-            layout (location = 0) in vec4 color;
+//            layout (location = 0) in vec4 color;
 
             out VS_OUT
             {
@@ -51,23 +50,16 @@ private:
             void main()
             {
                 const vec4 vertices[3] = vec4[3](
-        vec4(0, 0, 0.5, 1.0),
-        vec4(0.5, 0, 0.5, 1.0),
-        vec4(1.5, 0.5, 0.5, 1.0)
+        vec4(-1, -1, 0.5, 1.0),
+        vec4(1, -1, 0.5, 1.0),
+        vec4(0, 0, 0.5, 1.0)
         );
-//if(gl_VertexID >2) {
-//            gl_Position = vec4(-1, -1, 0.5, 1.0);
-//            return;
-//            }
-
-
+            const vec4 colors[] = vec4[3](vec4(1.0, 0.0, 0.0,1.0), vec4(0.0, 1.0, 0.0,1.0), vec4(0.0, 0.0, 1.0,1.0));
 
 
                 gl_Position = vertices[gl_VertexID];
 
-                vs_out.color = color;
-            if(gl_VertexID > 1)
-            vs_out.color = vec4(1.0, 0.0, 0.0, 1.0);
+                vs_out.color = colors[gl_VertexID];;
             })";
     const char* tesselationControlShaderSource =
         R"(layout (vertices = 3) out;
@@ -125,6 +117,12 @@ private:
         void main()
         {
             color = fs_in.color;
+//            color = fs_in.color;
+//            color = vec4(
+//        (int(gl_FragCoord.x) % 100)/100.0, //sin(gl_FragCoord.x * 0.25) * 0.5 + 0.5,
+//        0, //cos(gl_FragCoord.y * 0.25) * 0.5 + 0.5,
+//        sin(gl_FragCoord.x * 0.15) / cos(gl_FragCoord.y * 0.25), 1.0
+//        );
 //            color = vec4(1.0, 0, 0, 1.0);
         })";
 

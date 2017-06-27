@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 #include "TestGraphicsWorker.h"
 
 #include <chrono>
@@ -112,9 +111,9 @@ TestGraphicsWorker::~TestGraphicsWorker()
     //    glDeleteBuffers(1, &vboId);
 }
 
-void TestGraphicsWorker::draw(unsigned microseconds)
+void TestGraphicsWorker::handle(unsigned microseconds)
 {
-    std::cout << "dt: " << microseconds << std::endl;
+    //    std::cout << "dt: " << microseconds << std::endl;
     auto windowId = glfwOpenGLModule->getWindow();
     glfwMakeContextCurrent(windowId);
 
@@ -132,6 +131,8 @@ void TestGraphicsWorker::draw(unsigned microseconds)
     glClearColor(0.1, 0.1, 0.1, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    glEnable(GL_CULL_FACE);
+
     glUseProgram(shaderProgram.getId());
 
     glBindVertexArray(vaoId);
@@ -142,8 +143,8 @@ void TestGraphicsWorker::draw(unsigned microseconds)
         0.0,
         1.0);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glPointSize(25);
+    //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //    glPointSize(25);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     glfwSwapBuffers(windowId);

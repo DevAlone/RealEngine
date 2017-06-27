@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 #pragma once
 
 #include "forwards.h"
@@ -31,12 +30,18 @@ public:
     AbstractWorker(Core* core, Module* module, const std::string& name);
     virtual ~AbstractWorker() = 0;
 
+    virtual void handle(unsigned microseconds) = 0;
+
     const std::string& getName() const;
+
+    unsigned getPeriod() const;
+    void setPeriod(const unsigned value);
 
 protected:
     Core* core;
     Module* module;
     const std::string name;
     std::chrono::time_point<std::chrono::high_resolution_clock> previousHandlingTime;
+    unsigned period = 0;
 };
 }

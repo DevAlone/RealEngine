@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 #include "Core.h"
 
 namespace engine {
@@ -27,8 +26,8 @@ Core::Core()
 
     std::cout << "hardware_threads is " << hardware_threads << std::endl;
 
-    independentWorkersHandlerThread = std::unique_ptr<std::thread>(new std::thread(independentWorkersHandler, this));
     beforeGraphicsWorkersThreadPool = std::make_unique<ThreadPool>(hardware_threads);
+    independentWorkersThreadPool = std::make_unique<ThreadPool>(hardware_threads);
 }
 
 Core::~Core()
@@ -43,6 +42,7 @@ void Core::addModule(std::shared_ptr<Module> module)
 
 void Core::registerWorker(std::shared_ptr<Worker> worker)
 {
+    worker->previousHandlingTime = getTimePoint();
     workers.push_back(worker);
 
     switch (worker->getType()) {
@@ -73,6 +73,7 @@ void Core::registerWorkers(std::vector<std::shared_ptr<Worker>>& workers)
 }
 void Core::registerGraphicsWorker(std::shared_ptr<GraphicsWorker> graphicsWorker)
 {
+    graphicsWorker->previousHandlingTime = getTimePoint();
     graphicsWorkers.push_back(graphicsWorker);
 }
 
@@ -84,6 +85,13 @@ void Core::registerGraphicsWorkers(std::vector<std::shared_ptr<GraphicsWorker>>&
 
 int Core::exec()
 {
+    // set previous handling time for except problems with big dt on first start
+    for (auto& worker : workers)
+        worker->previousHandlingTime = getTimePoint();
+    for (auto& graphicsWorker : graphicsWorkers)
+        graphicsWorker->previousHandlingTime = getTimePoint();
+
+    independentWorkersHandlerThread = std::unique_ptr<std::thread>(new std::thread(independentWorkersHandler, this));
     // TODO: finish it
     while (_isAlive) {
 
@@ -91,13 +99,7 @@ int Core::exec()
         // parallel processing
         std::vector<std::future<void>> tasks;
         for (auto& worker : beforeGraphicsWorkers) {
-            tasks.push_back(beforeGraphicsWorkersThreadPool->enqueue(
-                [this, worker] {
-                    auto now = getTimePoint();
-                    auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
-                    worker->handle(dt);
-                    worker->previousHandlingTime = now;
-                }));
+            tasks.push_back(beforeGraphicsWorkersThreadPool->enqueue(handleWorker, this, worker.get()));
         }
 
         // wait for threads finishing
@@ -106,19 +108,13 @@ int Core::exec()
 
         // sequential processing
         for (auto& worker : beforeGraphicsSynchronizedWorkers) {
-            auto now = getTimePoint();
-            auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
-            worker->handle(dt);
-            worker->previousHandlingTime = now;
+            handleWorker(this, worker.get());
         }
 
         // graphics
         // TODO: предусмотреть возможность параллельной обработки graphicsWorker'ов
         for (auto& graphicsWorker : graphicsWorkers) {
-            auto now = getTimePoint();
-            auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - graphicsWorker->previousHandlingTime).count();
-            graphicsWorker->draw(dt);
-            graphicsWorker->previousHandlingTime = now;
+            handleWorker(this, graphicsWorker.get());
         }
 
         // TODO: add syncronization with workers add functions here
@@ -135,12 +131,7 @@ void Core::independentWorkersHandler(Core* core)
         // parallel processing
         std::vector<std::future<void>> tasks;
         for (auto& worker : core->independentWorkers) {
-            core->independentWorkersThreadPool->enqueue([core, worker] {
-                auto now = core->getTimePoint();
-                auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
-                worker->handle(dt);
-                worker->previousHandlingTime = now;
-            });
+            tasks.push_back(core->independentWorkersThreadPool->enqueue(handleWorker, core, worker.get()));
         }
         // waiting for finising
         for (auto& task : tasks)
@@ -148,11 +139,7 @@ void Core::independentWorkersHandler(Core* core)
 
         // sequential processing
         for (auto& worker : core->independentSynchronizedWorkers) {
-            // последовательная обработка
-            auto now = core->getTimePoint();
-            auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
-            worker->handle(dt);
-            worker->previousHandlingTime = now;
+            handleWorker(core, worker.get());
         }
     }
 }
@@ -181,6 +168,16 @@ void Core::stop()
 std::chrono::time_point<std::chrono::high_resolution_clock> Core::getTimePoint()
 {
     return std::chrono::high_resolution_clock::now();
+}
+
+void Core::handleWorker(Core* core, AbstractWorker* worker)
+{
+    auto now = core->getTimePoint();
+    auto dt = std::chrono::duration_cast<std::chrono::microseconds>(now - worker->previousHandlingTime).count();
+    if (dt < worker->period)
+        return;
+    worker->handle(dt);
+    worker->previousHandlingTime = now;
 }
 
 //void Core::modulesHandler(Core* core)

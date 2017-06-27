@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 #pragma once
 
 #include "forwards.h"
@@ -29,7 +28,7 @@ class GraphicsWorker : public AbstractWorker {
 public:
     GraphicsWorker(Core* core, Module* module, const std::string& name = "");
 
-    virtual void draw(unsigned microseconds) = 0;
+    virtual void handle(unsigned microseconds) = 0;
 
 protected:
 private:
