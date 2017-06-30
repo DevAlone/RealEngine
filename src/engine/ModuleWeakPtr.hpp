@@ -30,20 +30,20 @@ class ModuleWeakPtr {
 public:
     T* get() const
     {
-        return helper->moduleUniquePtr->get();
+        return helper.moduleUniquePtr->get();
     }
     T* operator->() const
     {
-        return helper->moduleUniquePtr->get();
+        return helper.moduleUniquePtr->get();
     }
     T& operator*() const
     {
-        return *helper->moduleUniquePtr->get();
+        return *helper.moduleUniquePtr->get();
     }
 
     bool isValid() const
     {
-        return helper->isValid();
+        return helper.isValid();
     }
     operator bool() const
     {
@@ -51,7 +51,7 @@ public:
     }
 
 private:
-    ModuleWeakPtr(ModuleUniquePtrHelper<T>& helper)
+    ModuleWeakPtr(const ModuleUniquePtrHelper<T>& helper)
         : helper(helper)
     {
     }
@@ -60,6 +60,6 @@ private:
     //        : helper(helper)
     //    {
     //    }
-    ModuleUniquePtrHelper<T>& helper;
+    const ModuleUniquePtrHelper<T>& helper;
 };
 }

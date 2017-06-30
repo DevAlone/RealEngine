@@ -73,7 +73,12 @@ int main(int argc, char* argv[])
 
     lambdaWorker->setPeriod(1000 * 1000);
 
-    //    ModuleWeakPtr<GLFWOpenGLModule>* weak;
+    auto weak = core.getModule<GLFWOpenGLModule>();
+    //    auto weak2 = core.getModule<int>();
+    auto windowId2 = weak->getWindow();
+
+    std::cout << "@ id1 = " << windowId1 << ", id2 = " << windowId2 << "; (id1 == id2) is " << (windowId1 == windowId2) << "; " << std::endl;
+
     //    //    core.getModule<GLFWOpenGLModule>();
     //    if (weak)
     //        std::cout << "aaaaa" << std::endl;

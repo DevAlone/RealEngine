@@ -22,10 +22,14 @@ limitations under the License.
 #include <memory>
 
 namespace engine {
+
 template <typename T>
 class ModuleUniquePtrHelper {
     friend class Core;
     friend class ModuleWeakPtr<T>;
+
+    template <typename U>
+    friend class ModuleUniquePtrHelper;
 
 public:
     ModuleUniquePtrHelper(const ModuleUniquePtrHelper& obj) = delete;
@@ -42,6 +46,11 @@ public:
     }
     ModuleUniquePtrHelper(ModuleUniquePtr<T>* moduleUniquePtr)
         : moduleUniquePtr(moduleUniquePtr)
+    {
+    }
+    template <typename U>
+    ModuleUniquePtrHelper(ModuleUniquePtrHelper<U>&& obj)
+        : moduleUniquePtr(obj.moduleUniquePtr)
     {
     }
     //    template <typename U>

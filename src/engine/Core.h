@@ -55,7 +55,23 @@ public:
     void removeModulesByName(const std::string* name) = delete;
     //    void removeLastModule() = delete;
     template <typename T>
-    ModuleWeakPtr<T> getModule() const = delete;
+    ModuleWeakPtr<T> getModule() const
+    {
+        auto& typeInfo = typeid(T);
+        std::type_index typeIndex(typeInfo);
+
+        std::unordered_map<std::type_index, ModuleUniquePtrHelper<Module>>::const_iterator it
+            = moduleTypes.find(typeIndex);
+
+        if (it == moduleTypes.end() || !it->second.isValid())
+            throw exceptions::ModuleException(std::string("Unable to find module of type ") + typeInfo.name());
+
+        const ModuleUniquePtrHelper<T>& helper = (const ModuleUniquePtrHelper<T>&)it->second; // TODO: проверить на ошибки, по идее не должно быть
+
+        ModuleWeakPtr<T> weakPtr(helper);
+
+        return weakPtr;
+    }
 
     void registerWorker(std::shared_ptr<Worker> worker);
     void registerWorkers(std::vector<std::shared_ptr<Worker>>& workers);
