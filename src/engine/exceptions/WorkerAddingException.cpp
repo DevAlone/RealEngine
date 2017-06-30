@@ -14,23 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
-#pragma once
-
-#include "engine/forwards.h"
-
-#include <exception>
-#include <stdexcept>
-#include <string>
+#include "WorkerAddingException.h"
 
 namespace engine {
 namespace exceptions {
-    class UnableToDetermineWorkerType : public std::logic_error {
-    public:
-        UnableToDetermineWorkerType(Worker* worker, const std::string& message = "");
-
-    private:
-        Worker* worker;
-    };
+    WorkerAddingException::WorkerAddingException(Worker* worker, const std::string& message)
+        : logic_error(message)
+        , worker(worker)
+    {
+    }
 }
 }

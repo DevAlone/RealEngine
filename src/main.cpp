@@ -52,21 +52,33 @@ int main(int argc, char* argv[])
 
     Core core;
 
-    auto glfwOpenGLModule = std::make_shared<GLFWOpenGLModule>(&core, 800, 600);
+    //    auto glfwOpenGLModule = std::make_unique<GLFWOpenGLModule>(&core, 800, 600);
+    auto glfwOpenGLModule = ModuleUniquePtr<GLFWOpenGLModule>(new GLFWOpenGLModule(&core, 800, 600));
+    auto windowId1 = glfwOpenGLModule->getWindow();
+
     auto testGraphicsWorker = std::make_shared<TestGraphicsWorker>(&core, glfwOpenGLModule.get());
     glfwOpenGLModule->addGraphicsWorker(testGraphicsWorker);
 
     core.registerGraphicsWorker(testGraphicsWorker);
 
-    core.addModule(glfwOpenGLModule);
+    // core.addModule(static_cast<ModuleUniquePtr<GLFWOpenGLModule>&&>(glfwOpenGLModule));
+    core.addModule(std::move(glfwOpenGLModule));
 
     auto lambdaWorker = std::make_shared<Worker>([&core](auto worker, unsigned microseconds) {
         std::cout << microseconds << std::endl;
+        //        core.stop();
     },
         &core, nullptr); //, WORKER_TYPE::INDEPENDENT);
     core.registerWorker(lambdaWorker);
 
     lambdaWorker->setPeriod(1000 * 1000);
+
+    //    ModuleWeakPtr<GLFWOpenGLModule>* weak;
+    //    //    core.getModule<GLFWOpenGLModule>();
+    //    if (weak)
+    //        std::cout << "aaaaa" << std::endl;
+
+    //    std::cout << windowId1 << std::endl;
 
     return core.exec();
 }

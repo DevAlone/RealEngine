@@ -113,6 +113,21 @@ TestGraphicsWorker::~TestGraphicsWorker()
 
 void TestGraphicsWorker::handle(unsigned microseconds)
 {
+    //    std::string str = "";
+    //    GLint numOfExtensions;
+    //    glGetIntegerv(GL_NUM_EXTENSIONS, &numOfExtensions);
+    //    str += std::to_string(numOfExtensions);
+    //    std::cout << str << std::endl;
+    //    for (int i = 0; i < numOfExtensions; i++) {
+    //        const char* extName = (const char*)(glGetStringi(GL_EXTENSIONS, i));
+
+    //        if (!strcmp(extName, "ARB_geometry_shader4")) {
+    //            std::cout << extName << std::endl;
+    //        }
+    //    }
+    //    while (true)
+    //        ;
+
     //    std::cout << "dt: " << microseconds << std::endl;
     auto windowId = glfwOpenGLModule->getWindow();
     glfwMakeContextCurrent(windowId);

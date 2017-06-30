@@ -16,6 +16,8 @@ limitations under the License.
 
 #include "Core.h"
 
+#include <utility>
+
 namespace engine {
 Core::Core()
 {
@@ -35,9 +37,22 @@ Core::~Core()
     independentWorkersHandlerThread->join();
 }
 
-void Core::addModule(std::shared_ptr<Module> module)
+void Core::addModule(ModuleUniquePtr<Module>&& module)
 {
-    modules.push_back(module);
+    // TODO:  maybe add mutex
+    auto& typeInfo = typeid(*module.get());
+    auto typeIndex = std::type_index(typeInfo);
+
+    auto found = moduleTypes.find(typeIndex);
+    if (found != moduleTypes.end() && found->second.isValid())
+        throw exceptions::ModuleAddingException(module.get(),
+            std::string("Attempting to add more than one instance of module which type is ") + typeid(module.get()).name());
+
+    modules.push_back(std::move(module));
+
+    ModuleUniquePtrHelper<Module> helper(&modules.back());
+
+    moduleTypes[typeIndex] = helper;
 }
 
 void Core::registerWorker(std::shared_ptr<Worker> worker)
@@ -60,7 +75,7 @@ void Core::registerWorker(std::shared_ptr<Worker> worker)
         break;
     default:
         // TODO: add normal exception types
-        throw exceptions::UnableToDetermineWorkerType(worker.get());
+        throw exceptions::WorkerAddingException(worker.get(), "Unable to determine worker type");
         break;
     }
 }

@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 #pragma once
 
 #include "forwards.h"
@@ -28,6 +27,7 @@ limitations under the License.
 
 #include <iostream>
 
+// TODO: add list(set) of extensions and function to find in that list
 namespace engine {
 namespace modules {
     namespace opengl {

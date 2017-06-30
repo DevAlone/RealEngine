@@ -14,16 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#pragma once
+#include "ModuleException.h"
 
 namespace engine {
-class Core;
-class Module;
-enum class WORKER_TYPE;
-class AbstractWorker;
-class Worker;
-class GraphicsModule;
-class GraphicsWorker;
-template <typename T>
-class ModuleWeakPtr;
+namespace exceptions {
+    ModuleException::ModuleException(const std::string& message)
+        : logic_error(message)
+    {
+    }
+}
 }

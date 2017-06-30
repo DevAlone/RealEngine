@@ -16,14 +16,19 @@ limitations under the License.
 
 #pragma once
 
+#include "engine/forwards.h"
+
+#include <exception>
+#include <stdexcept>
+#include <string>
+
 namespace engine {
-class Core;
-class Module;
-enum class WORKER_TYPE;
-class AbstractWorker;
-class Worker;
-class GraphicsModule;
-class GraphicsWorker;
-template <typename T>
-class ModuleWeakPtr;
+namespace exceptions {
+    class ModuleException : public std::logic_error {
+    public:
+        ModuleException(const std::string& message = "");
+
+    private:
+    };
+}
 }

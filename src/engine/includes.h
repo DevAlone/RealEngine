@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 #pragma once
 
 #include "AbstractWorker.h"
 #include "Core.h"
 #include "GraphicsWorker.h"
 #include "Module.h"
+#include "ModuleWeakPtr.hpp"
 #include "Worker.h"

@@ -24,3 +24,4 @@ add_executable(${PROJECT_NAME} ${RealEngine_SRC})
 target_link_libraries(${PROJECT_NAME} glfw ${GL_LIBRARY} m)
 target_link_libraries(${PROJECT_NAME} GLEW)
 target_link_libraries(${PROJECT_NAME} -lpthread)
+

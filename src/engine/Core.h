@@ -16,6 +16,8 @@ limitations under the License.
 
 #pragma once
 
+#include "ModuleUniquePtr.hpp"
+#include "ModuleUniquePtrHelper.hpp"
 #include "ThreadPool.hpp"
 #include "forwards.h"
 #include "includes.h"
@@ -26,11 +28,19 @@ limitations under the License.
 #include <iostream>
 #include <memory>
 #include <thread>
+#include <typeindex>
+#include <typeinfo>
+#include <unordered_map>
 #include <vector>
 
 #include <boost/signals2.hpp>
 
 namespace engine {
+
+// TODO: добавить сообщения для общения разных частей программы между собой
+// сообщения могут быть разных типов и подтипов, например Input::Keyboard::KeyPressed
+// генератором и получателем сообщений может быть кто-угодно
+// подумать над двумя вариантами реализации: непосредственный вызов методом получателей и добавление в очередь
 
 // TODO: add methods for executing tasks in threads
 // TODO: разобраться, почему один worker грузит все 6 ядер
@@ -39,13 +49,17 @@ public:
     Core();
     virtual ~Core();
     // TODO: change to std::unique_ptr
-    void addModule(std::shared_ptr<Module> module);
+
+    void addModule(ModuleUniquePtr<Module>&& module);
     // module removes with its workers
     void removeModulesByName(const std::string* name) = delete;
     //    void removeLastModule() = delete;
+    template <typename T>
+    ModuleWeakPtr<T> getModule() const = delete;
 
     void registerWorker(std::shared_ptr<Worker> worker);
     void registerWorkers(std::vector<std::shared_ptr<Worker>>& workers);
+    void unregisterWorker(std::shared_ptr<Worker> worker) = delete;
     void unregisterWorkersByName(const std::string* name) = delete;
 
     void registerGraphicsWorker(std::shared_ptr<GraphicsWorker> graphicsWorker);
@@ -66,7 +80,8 @@ private:
     unsigned hardware_threads;
     std::unique_ptr<std::thread> independentWorkersHandlerThread;
 
-    std::vector<std::shared_ptr<Module>> modules;
+    std::unordered_map<std::type_index, ModuleUniquePtrHelper<Module>> moduleTypes;
+    std::vector<ModuleUniquePtr<Module>> modules;
 
     std::vector<std::shared_ptr<Worker>> workers;
 

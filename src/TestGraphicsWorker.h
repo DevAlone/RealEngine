@@ -40,6 +40,8 @@ private:
     GLuint vaoId;
     const char* vertexShaderSource =
         R"(
+            #extension ARB_geometry_shader4 : require
+
 //            layout (location = 0) in vec4 color;
 
             out VS_OUT
