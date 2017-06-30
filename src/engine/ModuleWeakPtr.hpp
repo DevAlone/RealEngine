@@ -21,6 +21,7 @@ limitations under the License.
 
 #include <memory>
 
+// TODO: добавить lock метод для избежания внезапного исчезания модуля
 namespace engine {
 
 template <typename T>

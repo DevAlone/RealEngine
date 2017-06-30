@@ -66,6 +66,10 @@ int main(int argc, char* argv[])
 
     auto lambdaWorker = std::make_shared<Worker>([&core](auto worker, unsigned microseconds) {
         std::cout << microseconds << std::endl;
+        auto weak = core.getModule<GLFWOpenGLModule>();
+        auto windowId = weak->getWindow();
+
+        std::cout << "windowId is " << windowId << std::endl;
         //        core.stop();
     },
         &core, nullptr); //, WORKER_TYPE::INDEPENDENT);
