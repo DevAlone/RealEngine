@@ -19,6 +19,7 @@ limitations under the License.
 #include "ModuleUniquePtr.hpp"
 #include "ModuleUniquePtrHelper.hpp"
 #include "ThreadPool.hpp"
+#include "ThreadSafeQueue.hpp"
 #include "forwards.h"
 #include "includes.h"
 
@@ -27,6 +28,7 @@ limitations under the License.
 #include <chrono>
 #include <iostream>
 #include <memory>
+#include <mutex>
 #include <thread>
 #include <typeindex>
 #include <typeinfo>
@@ -98,8 +100,12 @@ private:
 
     std::unordered_map<std::type_index, ModuleUniquePtrHelper<Module>> moduleTypes;
     std::vector<ModuleUniquePtr<Module>> modules;
+    ThreadSafeQueue<ModuleUniquePtr<Module>> modulesAddQueue;
+    void processModulesQueue();
 
     std::vector<std::shared_ptr<Worker>> workers;
+    ThreadSafeQueue<std::shared_ptr<Worker>> workersAddQueue;
+    void processWorkersQueue();
 
     std::vector<std::shared_ptr<Worker>> beforeGraphicsWorkers;
     std::vector<std::shared_ptr<Worker>> beforeGraphicsSynchronizedWorkers;
@@ -107,12 +113,15 @@ private:
     std::vector<std::shared_ptr<Worker>> independentSynchronizedWorkers;
 
     std::vector<std::shared_ptr<GraphicsWorker>> graphicsWorkers;
+    ThreadSafeQueue<std::shared_ptr<GraphicsWorker>> graphicsWorkersAddQueue;
+    void processGraphicsWorkersQueue();
 
     std::unique_ptr<ThreadPool> beforeGraphicsWorkersThreadPool;
     std::unique_ptr<ThreadPool> independentWorkersThreadPool;
 
-    bool _isPaused;
-    bool _isAlive = true;
+    std::atomic<bool> _isPaused;
+    std::atomic<bool> _isAlive;
+    std::atomic<bool> _isStarted;
     std::chrono::time_point<std::chrono::high_resolution_clock> getTimePoint();
     static inline void handleWorker(Core* core, AbstractWorker* worker);
 };

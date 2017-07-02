@@ -30,6 +30,10 @@ Core::Core()
 
     beforeGraphicsWorkersThreadPool = std::make_unique<ThreadPool>(hardware_threads);
     independentWorkersThreadPool = std::make_unique<ThreadPool>(hardware_threads);
+
+    _isPaused = false;
+    _isAlive = true;
+    _isStarted = false;
 }
 
 Core::~Core()
@@ -39,45 +43,18 @@ Core::~Core()
 
 void Core::addModule(ModuleUniquePtr<Module>&& module)
 {
-    // TODO:  maybe add mutex
-    auto& typeInfo = typeid(*module.get());
-    auto typeIndex = std::type_index(typeInfo);
+    // может приводить к падению программы при попытке добавить два модуля одного типа
 
-    auto found = moduleTypes.find(typeIndex);
-    if (found != moduleTypes.end() && found->second.isValid())
-        throw exceptions::ModuleAddingException(module.get(),
-            std::string("Attempting to add more than one instance of module which type is ") + typeid(module.get()).name());
-
-    modules.push_back(std::move(module));
-
-    ModuleUniquePtrHelper<Module> helper(&modules.back());
-
-    moduleTypes[typeIndex] = helper;
+    modulesAddQueue.enqueue(std::move(module));
+    if (!_isStarted)
+        processModulesQueue();
 }
 
 void Core::registerWorker(std::shared_ptr<Worker> worker)
 {
-    worker->previousHandlingTime = getTimePoint();
-    workers.push_back(worker);
-
-    switch (worker->getType()) {
-    case WORKER_TYPE::BEFORE_GRAPHICS:
-        if (worker->isSynchronized())
-            beforeGraphicsSynchronizedWorkers.push_back(worker);
-        else
-            beforeGraphicsWorkers.push_back(worker);
-        break;
-    case WORKER_TYPE::INDEPENDENT:
-        if (worker->isSynchronized())
-            independentSynchronizedWorkers.push_back(worker);
-        else
-            independentWorkers.push_back(worker);
-        break;
-    default:
-        // TODO: add normal exception types
-        throw exceptions::WorkerAddingException(worker.get(), "Unable to determine worker type");
-        break;
-    }
+    workersAddQueue.enqueue(worker);
+    if (!_isStarted)
+        processWorkersQueue();
 }
 
 void Core::registerWorkers(std::vector<std::shared_ptr<Worker>>& workers)
@@ -88,8 +65,9 @@ void Core::registerWorkers(std::vector<std::shared_ptr<Worker>>& workers)
 }
 void Core::registerGraphicsWorker(std::shared_ptr<GraphicsWorker> graphicsWorker)
 {
-    graphicsWorker->previousHandlingTime = getTimePoint();
-    graphicsWorkers.push_back(graphicsWorker);
+    graphicsWorkersAddQueue.enqueue(graphicsWorker);
+    if (!_isStarted)
+        processGraphicsWorkersQueue();
 }
 
 void Core::registerGraphicsWorkers(std::vector<std::shared_ptr<GraphicsWorker>>& graphicsWorkers)
@@ -100,14 +78,22 @@ void Core::registerGraphicsWorkers(std::vector<std::shared_ptr<GraphicsWorker>>&
 
 int Core::exec()
 {
+    processModulesQueue();
+    processWorkersQueue();
+    processGraphicsWorkersQueue();
+
     // set previous handling time for except problems with big dt on first start
     for (auto& worker : workers)
-        worker->previousHandlingTime = getTimePoint();
+        worker->previousHandlingTime
+            = getTimePoint();
     for (auto& graphicsWorker : graphicsWorkers)
         graphicsWorker->previousHandlingTime = getTimePoint();
+    // TODO: add init for modules and workers(maybe)
 
     independentWorkersHandlerThread = std::unique_ptr<std::thread>(new std::thread(independentWorkersHandler, this));
     // TODO: finish it
+
+    _isStarted = true;
     while (_isAlive) {
 
         // TODO: убрать расход ресурсов на выделение памяти и прочее
@@ -133,6 +119,9 @@ int Core::exec()
         }
 
         // TODO: add syncronization with workers add functions here
+        // TODO: processModulesQueue();
+        // TODO: processWorkersQueue();
+        // TODO: processGraphicsWorkersQueue();
     }
 
     return 0;
@@ -178,6 +167,65 @@ bool Core::isAlive() const
 void Core::stop()
 {
     _isAlive = false;
+}
+
+void Core::processModulesQueue()
+{
+    // TODO: make it atomic
+    while (!modulesAddQueue.isEmpty()) {
+        auto module = modulesAddQueue.dequeue();
+
+        auto& typeInfo = typeid(*module.get());
+        auto typeIndex = std::type_index(typeInfo);
+
+        auto found = moduleTypes.find(typeIndex);
+        if (found != moduleTypes.end() && found->second.isValid())
+            throw exceptions::ModuleAddingException(module.get(),
+                std::string("Attempting to add more than one instance of module which type is ") + typeid(module.get()).name());
+
+        modules.push_back(std::move(module));
+
+        ModuleUniquePtrHelper<Module> helper(&modules.back());
+
+        moduleTypes[typeIndex] = helper;
+    }
+}
+
+void Core::processWorkersQueue()
+{
+    while (!workersAddQueue.isEmpty()) {
+        auto worker = workersAddQueue.dequeue();
+
+        worker->previousHandlingTime = getTimePoint();
+        workers.push_back(worker);
+
+        switch (worker->getType()) {
+        case WORKER_TYPE::BEFORE_GRAPHICS:
+            if (worker->isSynchronized())
+                beforeGraphicsSynchronizedWorkers.push_back(worker);
+            else
+                beforeGraphicsWorkers.push_back(worker);
+            break;
+        case WORKER_TYPE::INDEPENDENT:
+            if (worker->isSynchronized())
+                independentSynchronizedWorkers.push_back(worker);
+            else
+                independentWorkers.push_back(worker);
+            break;
+        default:
+            throw exceptions::WorkerAddingException(worker.get(), "Unable to determine worker type");
+            break;
+        }
+    }
+}
+
+void Core::processGraphicsWorkersQueue()
+{
+    while (!graphicsWorkersAddQueue.isEmpty()) {
+        auto graphicsWorker = graphicsWorkersAddQueue.dequeue();
+        graphicsWorker->previousHandlingTime = getTimePoint();
+        graphicsWorkers.push_back(graphicsWorker);
+    }
 }
 
 std::chrono::time_point<std::chrono::high_resolution_clock> Core::getTimePoint()
