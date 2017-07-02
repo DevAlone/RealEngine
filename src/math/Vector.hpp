@@ -1,29 +1,34 @@
 #pragma once
 
 #include <algorithm>
+#include <exception>
+#include <stdexcept>
 #include <type_traits>
 
 namespace math {
 
 template <typename T, unsigned D>
-class Vector final {
+class BaseVector {
     static_assert(std::is_arithmetic<T>::value, "Vector can only contains built-in arithmetic types");
 
 public:
     using DataArray = T[D];
 
-    Vector()
+    BaseVector()
     {
         for (unsigned i = 0; i < D; i++)
             data[i] = T();
     }
-    Vector(const DataArray& value) //const T (&data)[D])
+    virtual ~BaseVector()
+    {
+    }
+    BaseVector(const DataArray& value) //const T (&data)[D])
     {
         //        for (unsigned i = 0; i < D; i++)
         //            this->data[i] = data[i];
         std::copy(value, value + D, data);
     }
-    inline const DataArray& getData() const
+    inline const DataArray& getData() const noexcept
     {
         return data;
     }
@@ -31,12 +36,35 @@ public:
     {
         std::copy(value, value + D, data);
     }
-    inline T& operator[](unsigned index)
+    inline T& operator[](unsigned index) noexcept
     {
         return data[index];
     }
+    inline T& at(unsigned index)
+    {
+        if (index >= D)
+            throw std::out_of_range("index is out of range");
 
-private:
+        return data[index];
+    }
+
+protected:
     T data[D];
+};
+
+template <typename T, unsigned D>
+class Vector final : public BaseVector<T, D> {
+public:
+    Vector()
+        : BaseVector<T, D>()
+    {
+    }
+
+    Vector(const typename BaseVector<T, D>::DataArray& value)
+        : BaseVector<T, D>(value)
+    {
+    }
+
+    // TODO: implementation of general vector methods
 };
 }
