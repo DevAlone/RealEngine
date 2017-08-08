@@ -19,6 +19,8 @@ limitations under the License.
 #include "TestGraphicsWorker.h"
 #include "engine/modules/opengl/includes.h"
 
+#include "math/includes.h"
+
 #include <iostream>
 #include <memory>
 
@@ -44,6 +46,9 @@ public:
 int main(int argc, char* argv[])
 {
 
+    math::Vector<double, 5> v;
+    auto v2 = -v;
+    auto v3 = -math::Vector<double, 5>(1);
     // TODO: add logger
     // TODO: add framework for tests
 
