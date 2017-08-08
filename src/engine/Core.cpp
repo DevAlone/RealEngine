@@ -156,7 +156,7 @@ bool Core::isPaused() const
 void Core::setPausedState(bool value)
 {
     _isPaused = value;
-    pausedStateChanged(_isPaused);
+    //    pausedStateChanged(_isPaused);
 }
 
 bool Core::isAlive() const

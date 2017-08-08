@@ -35,7 +35,7 @@ limitations under the License.
 #include <unordered_map>
 #include <vector>
 
-#include <boost/signals2.hpp>
+//#include <boost/signals2.hpp>
 
 namespace engine {
 
@@ -89,7 +89,7 @@ public:
 
     bool isPaused() const;
     void setPausedState(bool value);
-    boost::signals2::signal<void(bool)> pausedStateChanged;
+    //    boost::signals2::signal<void(bool)> pausedStateChanged;
 
     bool isAlive() const;
     void stop();

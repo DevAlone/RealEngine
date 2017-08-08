@@ -101,8 +101,10 @@ TestGraphicsWorker::TestGraphicsWorker(engine::Core* core, engine::Module* modul
 
     //    glBindVertexArray(0);
     //    glCreateVertexArrays(1, &vaoId);
-    glGenVertexArrays(1, &vaoId);
+    glCreateVertexArrays(1, &vaoId);
     glBindVertexArray(vaoId);
+    //    glGenVertexArrays(1, &vaoId);
+    //    glBindVertexArray(vaoId);
 }
 
 TestGraphicsWorker::~TestGraphicsWorker()

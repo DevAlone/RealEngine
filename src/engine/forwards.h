@@ -19,7 +19,7 @@ limitations under the License.
 namespace engine {
 class Core;
 class Module;
-enum class WORKER_TYPE;
+//enum class WORKER_TYPE;
 class AbstractWorker;
 class Worker;
 class GraphicsModule;
