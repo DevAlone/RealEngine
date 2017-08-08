@@ -52,33 +52,45 @@ public:
     {
     }
 
-    // TODO: implementation of general vector methods
+    // implementation of general vector methods
 
     // unary
-    Vector<T, D>& operator+();
-    Vector<T, D> operator-() &;
+    Vector<T, D>& operator+() const;
+    Vector<T, D> operator-() const&;
     Vector<T, D>& operator-() &&;
     // binary
+    Vector<T, D>& operator+=(const Vector<T, D>& right);
+    Vector<T, D>& operator-=(const Vector<T, D>& right);
+
+    Vector<T, D>& operator*=(const T& right);
+    Vector<T, D>& operator/=(const T& right);
+
     template <typename FT, size_t FD>
     friend Vector<FT, FD> operator+(const Vector<FT, FD>& left, const Vector<FT, FD>& right);
-    template <typename FT, size_t FD>
-    friend Vector<FT, FD>&& operator+(const Vector<FT, FD>& left, Vector<FT, FD>&& right);
-    template <typename FT, size_t FD>
-    friend Vector<FT, FD>&& operator+(Vector<FT, FD>&& left, const Vector<FT, FD>& right);
 
-    //    Vector<T, D> operator+(const Vector<T, D>& right);
-    //    Vector<T, D> operator+(const Vector<T, D>& right) const&;
-    //    Vector<T, D>& operator+(Vector<T, D>&& right) const&;
-    //    Vector<T, D>&& operator+(const Vector<T, D>& right) &&;
+    template <typename FT, size_t FD>
+    friend Vector<FT, FD> operator-(const Vector<FT, FD>& left, const Vector<FT, FD>& right);
+
+    template <typename FT, size_t FD>
+    friend Vector<FT, FD> operator*(const Vector<FT, FD>& left, const FT& right);
+
+    template <typename FT, size_t FD>
+    friend Vector<FT, FD> operator*(const FT& left, const Vector<FT, FD>& right);
+
+    template <typename FT, size_t FD>
+    friend Vector<FT, FD> operator/(const Vector<FT, FD>& left, const FT& right);
+
+    template <typename FT, size_t FD>
+    friend Vector<FT, FD> operator/(const FT& left, const Vector<FT, FD>& right);
 };
 //unary
 template <typename T, size_t D>
-Vector<T, D>& Vector<T, D>::operator+()
+Vector<T, D>& Vector<T, D>::operator+() const
 {
     return *this;
 }
 template <typename T, size_t D>
-Vector<T, D> Vector<T, D>::operator-() &
+Vector<T, D> Vector<T, D>::operator-() const&
 {
     Vector<T, D> result = *this;
     for (auto& value : result.data)
@@ -96,21 +108,45 @@ Vector<T, D>& Vector<T, D>::operator-() &&
 }
 
 // binary
-//template <typename T, size_t D>
-//Vector<T, D> Vector<T, D>::operator+(const Vector<T, D>& right) const&
-//{
-//    Vector<T, D> result;
+template <typename T, size_t D>
+Vector<T, D>& Vector<T, D>::operator+=(const Vector<T, D>& right)
+{
+    for (size_t i = 0; i < D; ++i)
+        BaseVector<T, D>::data[i] += right.data[i];
 
-//    for (size_t i = 0; i < D; ++i)
-//        result.data[i] = BaseVector<T, D>::data[i] + right.data[i];
+    return *this;
+}
 
-//    return result;
-//}
+template <typename T, size_t D>
+Vector<T, D>& Vector<T, D>::operator-=(const Vector<T, D>& right)
+{
+    for (size_t i = 0; i < D; ++i)
+        BaseVector<T, D>::data[i] -= right.data[i];
+
+    return *this;
+}
+
+template <typename T, size_t D>
+Vector<T, D>& Vector<T, D>::operator*=(const T& right)
+{
+    for (size_t i = 0; i < D; ++i)
+        BaseVector<T, D>::data[i] *= right;
+
+    return *this;
+}
+
+template <typename T, size_t D>
+Vector<T, D>& Vector<T, D>::operator/=(const T& right)
+{
+    for (size_t i = 0; i < D; ++i)
+        BaseVector<T, D>::data[i] /= right;
+
+    return *this;
+}
 
 template <typename T, size_t D>
 Vector<T, D> operator+(const Vector<T, D>& left, const Vector<T, D>& right)
 {
-    std::cout << "operator+(&, &)" << std::endl;
     Vector<T, D> result;
 
     for (size_t i = 0; i < D; ++i)
@@ -120,22 +156,47 @@ Vector<T, D> operator+(const Vector<T, D>& left, const Vector<T, D>& right)
 }
 
 template <typename T, size_t D>
-Vector<T, D>&& operator+(const Vector<T, D>& left, Vector<T, D>&& right)
+Vector<T, D> operator-(const Vector<T, D>& left, const Vector<T, D>& right)
 {
-    std::cout << "operator+(&, &&)" << std::endl;
-    for (size_t i = 0; i < D; ++i)
-        right.data[i] += left.data[i];
+    Vector<T, D> result;
 
-    return std::move(right);
+    for (size_t i = 0; i < D; ++i)
+        result.data[i] = left.data[i] - right.data[i];
+
+    return result;
 }
 
-template <typename T, size_t D>
-Vector<T, D>&& operator+(Vector<T, D>&& left, const Vector<T, D>& right)
+template <typename FT, size_t FD>
+Vector<FT, FD> operator*(const Vector<FT, FD>& left, const FT& right)
 {
-    std::cout << "operator+(&&, &)" << std::endl;
-    for (size_t i = 0; i < D; ++i)
-        left.data[i] += right.data[i];
+    Vector<FT, FD> result;
 
-    return std::move(left);
+    for (size_t i = 0; i < FD; ++i)
+        result.data[i] = left.data[i] * right;
+
+    return result;
+}
+
+template <typename FT, size_t FD>
+Vector<FT, FD> operator*(const FT& left, const Vector<FT, FD>& right)
+{
+    return operator*(right, left);
+}
+
+template <typename FT, size_t FD>
+Vector<FT, FD> operator/(const Vector<FT, FD>& left, const FT& right)
+{
+    Vector<FT, FD> result;
+
+    for (size_t i = 0; i < FD; ++i)
+        result.data[i] = left.data[i] / right;
+
+    return result;
+}
+
+template <typename FT, size_t FD>
+Vector<FT, FD> operator/(const FT& left, const Vector<FT, FD>& right)
+{
+    return operator*(right, left);
 }
 }

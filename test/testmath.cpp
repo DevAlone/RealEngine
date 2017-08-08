@@ -23,7 +23,8 @@ int main()
 	printVector(v4);
 
 	auto v5 = math::Vector<int, 10>(5) + v4;
-
+	printVector(v5);
+	v5 *= 10;
 	printVector(v5);
 
 //	ambiguous overload

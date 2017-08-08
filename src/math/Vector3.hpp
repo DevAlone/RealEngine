@@ -35,6 +35,37 @@ public:
     T& refX() noexcept;
     T& refY() noexcept;
     T& refZ() noexcept;
+
+    // implementation of methods optimized for 3 dimensional vector
+
+    // unary
+    Vector<T, 3>& operator+() const;
+    Vector<T, 3> operator-() const&;
+    Vector<T, 3>& operator-() &&;
+    // binary
+    Vector<T, 3>& operator+=(const Vector<T, 3>& right);
+    Vector<T, 3>& operator-=(const Vector<T, 3>& right);
+
+    Vector<T, 3>& operator*=(const T& right);
+    Vector<T, 3>& operator/=(const T& right);
+
+    template <typename FT>
+    friend Vector<FT, 3> operator+(const Vector<FT, 3>& left, const Vector<FT, 3>& right);
+
+    template <typename FT>
+    friend Vector<FT, 3> operator-(const Vector<FT, 3>& left, const Vector<FT, 3>& right);
+
+    template <typename FT>
+    friend Vector<FT, 3> operator*(const Vector<FT, 3>& left, const FT& right);
+
+    template <typename FT>
+    friend Vector<FT, 3> operator*(const FT& left, const Vector<FT, 3>& right);
+
+    template <typename FT>
+    friend Vector<FT, 3> operator/(const Vector<FT, 3>& left, const FT& right);
+
+    template <typename FT>
+    friend Vector<FT, 3> operator/(const FT& left, const Vector<FT, 3>& right);
 };
 
 template <typename T>
@@ -97,5 +128,123 @@ template <typename T>
 T& Vector<T, 3>::refZ() noexcept
 {
     return BaseVector<T, 3>::data[2];
+}
+
+// implementation of methods optimized for 3 dimensional vector
+
+// unary
+template <typename T>
+Vector<T, 3>& Vector<T, 3>::operator+() const
+{
+}
+template <typename T>
+Vector<T, 3> Vector<T, 3>::operator-() const&
+{
+}
+template <typename T>
+Vector<T, 3>& Vector<T, 3>::operator-() &&
+{
+}
+
+// binary
+
+template <typename T>
+Vector<T, 3>& Vector<T, 3>::operator+=(const Vector<T, 3>& right)
+{
+    BaseVector<T, 3>::data[0] += right.data[0];
+    BaseVector<T, 3>::data[1] += right.data[1];
+    BaseVector<T, 3>::data[2] += right.data[2];
+
+    return *this;
+}
+
+template <typename T>
+Vector<T, 3>& Vector<T, 3>::operator-=(const Vector<T, 3>& right)
+{
+    BaseVector<T, 3>::data[0] -= right.data[0];
+    BaseVector<T, 3>::data[1] -= right.data[1];
+    BaseVector<T, 3>::data[2] -= right.data[2];
+
+    return *this;
+}
+
+template <typename T>
+Vector<T, 3>& Vector<T, 3>::operator*=(const T& right)
+{
+    BaseVector<T, 3>::data[0] *= right;
+    BaseVector<T, 3>::data[1] *= right;
+    BaseVector<T, 3>::data[2] *= right;
+
+    return *this;
+}
+
+template <typename T>
+Vector<T, 3>& Vector<T, 3>::operator/=(const T& right)
+{
+    BaseVector<T, 3>::data[0] /= right;
+    BaseVector<T, 3>::data[1] /= right;
+    BaseVector<T, 3>::data[2] /= right;
+
+    return *this;
+}
+
+template <typename FT>
+Vector<FT, 3> operator+(const Vector<FT, 3>& left, const Vector<FT, 3>& right)
+{
+    Vector<FT, 3> result;
+
+    result.data[0] = left.data[0] + right.data[0];
+    result.data[1] = left.data[1] + right.data[1];
+    result.data[2] = left.data[2] + right.data[2];
+
+    return result;
+}
+
+template <typename FT>
+Vector<FT, 3> operator-(const Vector<FT, 3>& left, const Vector<FT, 3>& right)
+{
+    Vector<FT, 3> result;
+
+    result.data[0] = left.data[0] - right.data[0];
+    result.data[1] = left.data[1] - right.data[1];
+    result.data[2] = left.data[2] - right.data[2];
+
+    return result;
+}
+
+template <typename FT>
+Vector<FT, 3> operator*(const Vector<FT, 3>& left, const FT& right)
+{
+    Vector<FT, 3> result;
+
+    result.data[0] = left.data[0] * right;
+    result.data[1] = left.data[1] * right;
+    result.data[2] = left.data[2] * right;
+
+    return result;
+}
+
+template <typename FT>
+Vector<FT, 3> operator*(const FT& left, const Vector<FT, 3>& right)
+{
+    return operator*(right, left);
+}
+
+template <typename FT>
+Vector<FT, 3> operator/(const Vector<FT, 3>& left, const FT& right)
+{
+    Vector<FT, 3> result;
+
+    result.data[0] = left.data[0] / right;
+    result.data[1] = left.data[1] / right;
+    result.data[2] = left.data[2] / right;
+
+    return result;
+}
+
+template <typename FT>
+Vector<FT, 3> operator/(const FT& left, const Vector<FT, 3>& right)
+{
+    return operator*(right, left);
 }
 }
